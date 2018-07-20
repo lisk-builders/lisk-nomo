@@ -17,6 +17,7 @@ const enum ApiStatus {
     HttpsOpen = 300,
     HttpOpen = 200,
     Closed = 100,
+    Unknown = 0,
 }
 
 function timePlusMinus(ms: number): number {
@@ -86,7 +87,7 @@ class MonitoredNode extends events.EventEmitter {
 
     private readonly connectedPeer: LiskPeer;
     private readonly _chain: Chain = new Map<number, string>(); // height -> broadhash
-    private _apiStatus: ApiStatus;
+    private _apiStatus: ApiStatus = ApiStatus.Unknown;
     private _consensus = new Array<number>();
     private _forgingConfigured: string | false | undefined;
     private _isForging: string | false | undefined;
@@ -278,6 +279,8 @@ function ok(node: MonitoredNode) {
 
 function describeApiStatus(status: ApiStatus) {
     switch (status) {
+        case ApiStatus.Unknown:
+            return "unknown";
         case ApiStatus.Closed:
             return "API closed";
         case ApiStatus.HttpsOpen:
