@@ -68,7 +68,7 @@ class MonitoredNode extends events.EventEmitter {
 
     get movingAverageConsensus(): number | undefined {
         if (this._consensus.length === 0) return undefined;
-        return Math.floor(average(this._consensus, 3));
+        return Math.floor(average(this._consensus, 5));
     }
 
     get peers(): PeerInfo[] {
