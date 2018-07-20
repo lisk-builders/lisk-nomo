@@ -1,0 +1,3 @@
+[submodule "src/external/argus"]
+	path = src/external/argus
+	url = https://github.com/lisk-builders/lisk-argus.git
