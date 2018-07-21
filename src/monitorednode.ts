@@ -87,9 +87,8 @@ export class MonitoredNode extends events.EventEmitter {
     return Math.min(...this.timeDiffs.slice(-500));
   }
 
-  public httpApi: LiskHttpApi;
-  public httpsApi: LiskHttpApi;
-
+  private readonly httpApi: LiskHttpApi;
+  private readonly httpsApi: LiskHttpApi;
   private readonly connectedPeer: LiskPeer;
   private readonly _chain: Chain = new Map<number, string>(); // height -> broadhash
   private _apiStatus: ApiStatus = ApiStatus.Unknown;
