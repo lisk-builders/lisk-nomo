@@ -165,6 +165,12 @@ function logStatus() {
   }
 }
 
+let lastOutput = 0;
 for (const node of nodes) {
-  node.on(MonitoredNodeEvents.Updated, () => logStatus());
+  node.on(MonitoredNodeEvents.Updated, () => {
+    if (Date.now() - lastOutput > 500) {
+      logStatus()
+      lastOutput = Date.now();
+    }
+  });
 }
