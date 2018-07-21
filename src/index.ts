@@ -135,9 +135,9 @@ function compareNodeQuality(a: MonitoredNode, b: MonitoredNode): number {
 }
 
 let ip: string | undefined;
-getIp().then(i => ip = i).catch(() => { /* ignore */ } );
+getIp().then(i => ip = i).catch(console.warn);
 setInterval(() => {
-  getIp().then(i => ip = i).catch(() => { /* ignore */ } );
+  getIp().then(i => ip = i).catch(console.warn);
 }, 60*1000);
 
 function logStatus() {
