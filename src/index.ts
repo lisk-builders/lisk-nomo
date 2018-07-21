@@ -117,7 +117,7 @@ function statusLine(node: MonitoredNode): string {
     online,
     (node.version || "").padStart(10),
     formatTimeDiff(node.movingMinTimeDiffMs),
-    printHead(node.chain),
+    printHead(node.chain).padEnd(20),
     api,
     consensus,
     forgingStatus(node),
