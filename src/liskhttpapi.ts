@@ -10,6 +10,10 @@ export class LiskHttpApi {
   )
   {}
 
+  public getStatus(): Promise<ResponseObject<Status>> {
+    return request(`${this.baseUrl()}/node/status`, {json: true});
+  }
+
   public getStatusForging(): Promise<ResponseList<ForgingStatus>> {
     return request(`${this.baseUrl()}/node/status/forging`, {json: true});
   }
@@ -20,9 +24,20 @@ export class LiskHttpApi {
   }
 }
 
+export interface Status {
+  readonly broadhash: string,
+  readonly consensus: number,
+  readonly height: number,
+}
+
 export interface ForgingStatus {
   forging: boolean,
   publicKey: string,
+}
+
+export interface ResponseObject<T> {
+  readonly meta: any;
+  readonly data: T;
 }
 
 export interface ResponseList<T> {

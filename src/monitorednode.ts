@@ -1,5 +1,4 @@
 import * as events from 'events';
-import * as request from 'request-promise-native'
 import { LiskPeer, PeerState, LiskPeerEvent } from "./external/argus/src/peers/Peer";
 import { NodeStatus, PeerInfo } from './external/argus/src/peers/LiskClient';
 
@@ -89,6 +88,7 @@ export class MonitoredNode extends events.EventEmitter {
   }
 
   public httpApi: LiskHttpApi;
+  public httpsApi: LiskHttpApi;
 
   private readonly connectedPeer: LiskPeer;
   private readonly _chain: Chain = new Map<number, string>(); // height -> broadhash
@@ -103,6 +103,7 @@ export class MonitoredNode extends events.EventEmitter {
     super();
 
     this.httpApi = new LiskHttpApi(hostname, 7000);
+    this.httpsApi = new LiskHttpApi(hostname, 7000, true);
 
     this.connectedPeer = new LiskPeer({
       ip: hostname,
@@ -196,11 +197,11 @@ export class MonitoredNode extends events.EventEmitter {
     const port = this.connectedPeer.client.options.httpPort;
 
     try {
-      await request(`https://${host}:${port}/api/node/status`, {json: true});
+      await this.httpsApi.getStatus();
       return ApiStatus.HttpsOpen;
     } catch (_) {
       try {
-        await request(`http://${host}:${port}/api/node/status`, {json: true});
+        await this.httpApi.getStatus();
         return ApiStatus.HttpOpen;
       } catch (_) {
         return ApiStatus.Closed;
