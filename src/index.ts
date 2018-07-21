@@ -100,8 +100,9 @@ function describeApiStatus(status: ApiStatus) {
   }
 }
 
-function formatTimeDiff(ms: number): string {
-  if (ms > -1000 && ms < 1000) return ms.toString().padStart(3) + "ms";
+function formatTimeDiff(ms: number | undefined): string {
+  if (ms === undefined) return "".padStart(5)
+  else if (ms > -1000 && ms < 1000) return ms.toString().padStart(3) + "ms";
   else return (ms/1000).toFixed(1).padStart(4) + "s";
 }
 

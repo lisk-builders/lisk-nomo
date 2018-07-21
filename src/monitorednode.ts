@@ -79,8 +79,9 @@ export class MonitoredNode extends events.EventEmitter {
     return Math.floor(average(this.timeDiffs, 500));
   }
 
-  get movingMinTimeDiffMs(): number {
-    return Math.min(...this.timeDiffs.slice(-500));
+  get movingMinTimeDiffMs(): number | undefined {
+    if (this.timeDiffs.length == 0) return undefined;
+    else return Math.min(...this.timeDiffs.slice(-500));
   }
 
   private readonly httpApi: LiskHttpApi;
