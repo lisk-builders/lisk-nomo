@@ -55,7 +55,7 @@ const nodes: ReadonlyArray<MonitoredNode> = [
   new MonitoredNode("node02.testnet.lisk", ownNode),
   new MonitoredNode("wiki.lisk.prolina.org", ownNode),
   new MonitoredNode("testnet.lisk.io", ownNode),
-]
+];
 
 function nameWidth(name: string, length: number) {
   let cutName = name.substring(0, length);
