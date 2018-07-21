@@ -31,8 +31,8 @@ export interface Status {
 }
 
 export interface ForgingStatus {
-  forging: boolean,
-  publicKey: string,
+  readonly forging: boolean,
+  readonly publicKey: string,
 }
 
 export interface ResponseObject<T> {
