@@ -14,6 +14,7 @@
     "@types/node": "^10.5.2",
     "events": "^3.0.0",
     "request-promise-native": "^1.0.5",
+    "semver": "^5.5.0",
     "socketcluster-client": "^13.0.1",
     "stun": "^1.2.0",
     "underscore": "^1.9.1",
