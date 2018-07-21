@@ -58,11 +58,11 @@ class MonitoredNode extends events.EventEmitter {
         return this._apiStatus;
     }
 
-    get forgingConfigured(): string | false {
+    get forgingConfigured(): string | false | undefined {
         return this._forgingConfigured;
     }
 
-    get isForging(): string | false {
+    get isForging(): string | false | undefined {
         return this._isForging;
     }
 
@@ -119,10 +119,12 @@ class MonitoredNode extends events.EventEmitter {
         });
 
         this.connectedPeer.on(LiskPeerEvent.peersUpdated, (peers: PeerInfo[]) => {
-            const time = mostRecentPeerUpdate(peers);
-            const diff = Date.now() - time.getTime();
-            this.timeDiffs.push(diff);
-            this.emit(EVENT_UPDATED);
+            const mostRecentUpdatedPeerTime = mostRecentPeerUpdate(peers);
+            if (mostRecentUpdatedPeerTime) {
+                const diff = Date.now() - mostRecentUpdatedPeerTime.getTime();
+                this.timeDiffs.push(diff);
+                this.emit(EVENT_UPDATED);
+            }
         });
 
         setInterval(async () => {

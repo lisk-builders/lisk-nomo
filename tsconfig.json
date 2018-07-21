@@ -4,7 +4,8 @@
         "lib": [
             "es2017"
         ],
-        "target": "es6"
+        "target": "es6",
+        "strictNullChecks": true
     },
     "include": [
         "src/index.ts"
