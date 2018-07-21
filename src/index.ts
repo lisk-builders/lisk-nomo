@@ -26,7 +26,7 @@ const debugChain = (chain: Chain): string => {
                 missing += 1;
             }
         }
-        const head = chain.get(max);        
+        const head = chain.get(max);
         chainDescription = `from: ${min}, to: ${max}, length: ${length}, missing: ${missing}, head: ${head}`;
     }
 
@@ -35,128 +35,133 @@ const debugChain = (chain: Chain): string => {
 */
 
 const printHead = (chain: Chain): string => {
-    const keys = Array.from(chain.keys());
-    keys.sort();
+  const keys = Array.from(chain.keys());
+  keys.sort();
 
-    let chainDescription: string;
-    if (keys.length == 0) {
-        chainDescription = "unknown";
-    } else {
-        const max = keys[keys.length-1];
-        const head = chain.get(max);        
-        chainDescription = `${max}/${head}`;
-    }
+  let chainDescription: string;
+  if (keys.length == 0) {
+    chainDescription = "unknown";
+  } else {
+    const max = keys[keys.length-1];
+    const head = chain.get(max);
+    chainDescription = `${max}/${head}`;
+  }
 
-    return `Head{${chainDescription}}`;
+  return `Head{${chainDescription}}`;
 }
 
 const nodes: ReadonlyArray<MonitoredNode> = [
-    new MonitoredNode("node01.testnet.lisk", ownNode),
-    new MonitoredNode("node02.testnet.lisk", ownNode),
-    new MonitoredNode("wiki.lisk.prolina.org", ownNode),
-    new MonitoredNode("testnet.lisk.io", ownNode),
+  new MonitoredNode("node01.testnet.lisk", ownNode),
+  new MonitoredNode("node02.testnet.lisk", ownNode),
+  new MonitoredNode("wiki.lisk.prolina.org", ownNode),
+  new MonitoredNode("testnet.lisk.io", ownNode),
 ]
 
 function nameWidth(name: string, length: number) {
-    let cutName = name.substring(0, length);
-    if (cutName != name) {
-        cutName = cutName.substring(0, length-1) + "…"; 
-    }
-    return cutName.padEnd(length);
+  let cutName = name.substring(0, length);
+  if (cutName != name) {
+    cutName = cutName.substring(0, length-1) + "…";
+  }
+  return cutName.padEnd(length);
 }
 
 function forgingStatus(node: MonitoredNode): string {
-    let out: string;
-    if (node.isForging) {
-        out = `forging (${node.isForging.substring(0, 6)})`;
+  let out: string;
+  if (node.isForging) {
+    out = `forging (${node.isForging.substring(0, 6)})`;
+  } else {
+    if (typeof(node.forgingConfigured) === "undefined") {
+      out = "forging status unknown";
+    } else if (node.forgingConfigured === false) {
+      out = "forging not configured";
     } else {
-        if (typeof(node.forgingConfigured) === "undefined") {
-            out = "forging status unknown";
-        } else if (node.forgingConfigured === false) {
-            out = "forging not configured";
-        } else {
-            out = `ready to forge (${node.forgingConfigured.substring(0, 6)})`;
-        }
+      out = `ready to forge (${node.forgingConfigured.substring(0, 6)})`;
     }
-    return out.padEnd(23);
+  }
+  return out.padEnd(23);
 }
 
 function ok(node: MonitoredNode) {
-    return node.online
-        && node.forgingConfigured
-        && (node.movingAverageConsensus || 0) >= 51 // Lisk Core minBroadhashConsensus
+  return node.online
+    && node.forgingConfigured
+    && (node.movingAverageConsensus || 0) >= 51 // Lisk Core minBroadhashConsensus
 }
 
 function describeApiStatus(status: ApiStatus) {
-    switch (status) {
-        case ApiStatus.Unknown:
-            return "unknown";
-        case ApiStatus.Closed:
-            return "API closed";
-        case ApiStatus.HttpsOpen:
-            return "HTTPs open";
-        case ApiStatus.HttpOpen:
-            return "HTTP open";
-    }
+  switch (status) {
+    case ApiStatus.Unknown:
+      return "unknown";
+    case ApiStatus.Closed:
+      return "API closed";
+    case ApiStatus.HttpsOpen:
+      return "HTTPs open";
+    case ApiStatus.HttpOpen:
+      return "HTTP open";
+  }
+}
+
+function formatTimeDiff(ms: number): string {
+  if (ms > -1000 && ms < 1000) return ms.toString().padStart(3) + "ms";
+  else return (ms/1000).toFixed(1).padStart(4) + "s";
 }
 
 function statusLine(node: MonitoredNode): string {
-    const online = node.online
-        ? "online "
-        : "offline";
-    const api = describeApiStatus(node.apiStatus).padEnd(10);
-    const consensus = (typeof node.movingAverageConsensus == "undefined" ? "?" : node.movingAverageConsensus.toString()).padStart(3);
-    return [
-        nameWidth(node.hostname, 22),
-        online,
-        node.movingMinTimeDiffMs.toString().padStart(3) + "ms",
-        printHead(node.chain),
-        api,
-        consensus,
-        forgingStatus(node),
-        ok(node) ? "ok" : ""
-    ].join("  ");
+  const online = node.online
+    ? "online "
+    : "offline";
+  const api = describeApiStatus(node.apiStatus).padEnd(10);
+  const consensus = (typeof node.movingAverageConsensus == "undefined" ? "?" : node.movingAverageConsensus.toString()).padStart(3);
+  return [
+    nameWidth(node.hostname, 22),
+    online,
+    formatTimeDiff(node.movingMinTimeDiffMs),
+    printHead(node.chain),
+    api,
+    consensus,
+    forgingStatus(node),
+    ok(node) ? "ok" : ""
+  ].join("  ");
 }
 
 function compareNodeQuality(a: MonitoredNode, b: MonitoredNode): number {
-    if (a.online && !b.online) return -1;
-    if (!a.online && b.online) return 1;
-    if (a.apiStatus > b.apiStatus) return -1;
-    if (a.apiStatus < b.apiStatus) return 1;
-    if (a.forgingConfigured !== undefined && b.forgingConfigured === undefined) return -1;
-    if (a.forgingConfigured === undefined && b.forgingConfigured !== undefined) return 1;
-    return a.hostname.localeCompare(b.hostname);
+  if (a.online && !b.online) return -1;
+  if (!a.online && b.online) return 1;
+  if (a.apiStatus > b.apiStatus) return -1;
+  if (a.apiStatus < b.apiStatus) return 1;
+  if (a.forgingConfigured !== undefined && b.forgingConfigured === undefined) return -1;
+  if (a.forgingConfigured === undefined && b.forgingConfigured !== undefined) return 1;
+  return a.hostname.localeCompare(b.hostname);
 }
 
 let ip: string | undefined;
 getIp().then(i => ip = i).catch(() => { /* ignore */ } );
 setInterval(() => {
-    getIp().then(i => ip = i).catch(() => { /* ignore */ } );
+  getIp().then(i => ip = i).catch(() => { /* ignore */ } );
 }, 60*1000);
 
 function logStatus() {
-    const readyToForge = nodes.filter(n => typeof(n.forgingConfigured) === "string").sort(compareNodeQuality);
-    const other = nodes.filter(n => typeof(n.forgingConfigured) !== "string").sort(compareNodeQuality);
+  const readyToForge = nodes.filter(n => typeof(n.forgingConfigured) === "string").sort(compareNodeQuality);
+  const other = nodes.filter(n => typeof(n.forgingConfigured) !== "string").sort(compareNodeQuality);
 
-    console.log("");
-    console.log("========================");
-    console.log(`Status time ${new Date(Date.now()).toISOString()} | Monitoring IP: ${ip}`);
-    console.log("");
-    console.log("Nodes ready to forge");
-    for (const node of readyToForge) {    
-        console.log("  " + statusLine(node));
-    }
-    if (readyToForge.length === 0) {
-        console.log("  none")
-    }
+  console.log("");
+  console.log("========================");
+  console.log(`Status time ${new Date(Date.now()).toISOString()} | Monitoring IP: ${ip}`);
+  console.log("");
+  console.log("Nodes ready to forge");
+  for (const node of readyToForge) {
+    console.log("  " + statusLine(node));
+  }
+  if (readyToForge.length === 0) {
+    console.log("  none")
+  }
 
-    console.log("Other nodes");
-    for (const node of other) {
-        console.log("  " + statusLine(node));
-    }
-    if (other.length === 0) {
-        console.log("  none")
-    }
+  console.log("Other nodes");
+  for (const node of other) {
+    console.log("  " + statusLine(node));
+  }
+  if (other.length === 0) {
+    console.log("  none")
+  }
 }
 
 for (const node of nodes) {
