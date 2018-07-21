@@ -4,6 +4,7 @@ import { LiskPeer, PeerState, LiskPeerEvent } from "./external/argus/src/peers/P
 import { NodeStatus, PeerInfo } from "./external/argus/src/peers/LiskClient";
 
 import { getIp } from "./stun";
+import { LiskHttpApi } from "./liskhttpapi";
 
 const ownHttpPort = 3000;
 const ownWsPort = 3001;
@@ -85,6 +86,8 @@ class MonitoredNode extends events.EventEmitter {
         return Math.min(...this.timeDiffs.slice(-500));
     }
 
+    public httpApi: LiskHttpApi;
+
     private readonly connectedPeer: LiskPeer;
     private readonly _chain: Chain = new Map<number, string>(); // height -> broadhash
     private _apiStatus: ApiStatus = ApiStatus.Unknown;
@@ -96,6 +99,8 @@ class MonitoredNode extends events.EventEmitter {
 
     constructor(public readonly hostname: string) {
         super();
+
+        this.httpApi = new LiskHttpApi(hostname, 7000);
 
         this.connectedPeer = new LiskPeer({
             ip: hostname,
@@ -153,7 +158,7 @@ class MonitoredNode extends events.EventEmitter {
 
         setInterval(async () => {
             if (this._apiStatus == ApiStatus.HttpOpen) {
-                this.connectedPeer.client.getStatusForgingHTTP()
+                this.httpApi.getStatusForging()
                     // handle Lisk bug https://github.com/LiskHQ/lisk/issues/2058
                     .then(response => response.data ? response.data : [])
                     .then(status => {
