@@ -41,9 +41,11 @@ function average(array: number[], count: number = Number.POSITIVE_INFINITY) {
   return selection.reduce((sum, element) => sum + element, 0 ) / selection.length;
 }
 
-export class MonitoredNode extends events.EventEmitter {
-  static readonly EVENT_UPDATED = "updated";
+export const enum MonitoredNodeEvents {
+  Updated = "updated",
+}
 
+export class MonitoredNode extends events.EventEmitter {
   get chain(): Chain {
     return this._chain;
   }
@@ -116,7 +118,7 @@ export class MonitoredNode extends events.EventEmitter {
 
       this._nonceFromNetwork = status.nonce;
       this._chain.set(status.height, shortBroadhash(status));
-      this.emit(MonitoredNode.EVENT_UPDATED);
+      this.emit(MonitoredNodeEvents.Updated);
     });
 
     this.connectedPeer.on(LiskPeerEvent.peersUpdated, (peers: PeerInfo[]) => {
@@ -124,7 +126,7 @@ export class MonitoredNode extends events.EventEmitter {
       if (mostRecentUpdatedPeerTime) {
         const diff = Date.now() - mostRecentUpdatedPeerTime.getTime();
         this.timeDiffs.push(diff);
-        this.emit(MonitoredNode.EVENT_UPDATED);
+        this.emit(MonitoredNodeEvents.Updated);
       }
     });
 
@@ -132,7 +134,7 @@ export class MonitoredNode extends events.EventEmitter {
       const newValue = await this.testApiStatus();
       if (this._apiStatus != newValue) {
         this._apiStatus = newValue;
-        this.emit(MonitoredNode.EVENT_UPDATED);
+        this.emit(MonitoredNodeEvents.Updated);
       }
     }, timePlusMinus(5000));
 
@@ -151,7 +153,7 @@ export class MonitoredNode extends events.EventEmitter {
 
       if (consensus !== undefined) {
         this._consensus.push(consensus);
-        this.emit(MonitoredNode.EVENT_UPDATED);
+        this.emit(MonitoredNodeEvents.Updated);
       }
     }, timePlusMinus(3000));
 

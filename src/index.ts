@@ -1,5 +1,5 @@
 
-import { MonitoredNode, OwnNode, ApiStatus, Chain } from "./monitorednode";
+import { MonitoredNode, OwnNode, ApiStatus, Chain, MonitoredNodeEvents } from "./monitorednode";
 import { getIp } from "./stun";
 
 const ownNode: OwnNode = {
@@ -165,5 +165,5 @@ function logStatus() {
 }
 
 for (const node of nodes) {
-  node.on(MonitoredNode.EVENT_UPDATED, () => logStatus());
+  node.on(MonitoredNodeEvents.Updated, () => logStatus());
 }
