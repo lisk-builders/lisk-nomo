@@ -73,12 +73,6 @@ export class MonitoredNode extends events.EventEmitter {
     return Math.floor(average(this._consensus, 5));
   }
 
-  get peers(): PeerInfo[] {
-    const peers = this.connectedPeer.peers;
-    if (peers) return peers;
-    else return [];
-  }
-
   get movingAverageTimeDiffMs(): number {
     return Math.floor(average(this.timeDiffs, 500));
   }
@@ -195,9 +189,6 @@ export class MonitoredNode extends events.EventEmitter {
   }
 
   private async testApiStatus(): Promise<ApiStatus> {
-    const host = this.connectedPeer.client.options.hostname;
-    const port = this.connectedPeer.client.options.httpPort;
-
     try {
       await this.httpsApi.getStatus();
       return ApiStatus.HttpsOpen;
