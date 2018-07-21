@@ -10,7 +10,7 @@ export class LiskHttpApi {
   )
   {}
 
-  public getStatusForging(): Promise<ForgingResponse> {
+  public getStatusForging(): Promise<ResponseList<ForgingStatus>> {
     return request(`${this.baseUrl()}/node/status/forging`, {json: true});
   }
 
@@ -25,7 +25,7 @@ export interface ForgingStatus {
   publicKey: string,
 }
 
-export interface ForgingResponse {
-  meta: any;
-  data: ForgingStatus[];
+export interface ResponseList<T> {
+  readonly meta: any;
+  readonly data: T[];
 }
