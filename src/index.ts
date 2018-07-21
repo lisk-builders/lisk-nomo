@@ -114,6 +114,7 @@ function statusLine(node: MonitoredNode): string {
   return [
     nameWidth(node.hostname, 22),
     online,
+    (node.version || "").padStart(10),
     formatTimeDiff(node.movingMinTimeDiffMs),
     printHead(node.chain),
     api,

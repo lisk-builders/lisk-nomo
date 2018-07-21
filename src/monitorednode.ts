@@ -50,8 +50,8 @@ export class MonitoredNode extends events.EventEmitter {
     return this._chain;
   }
 
-  get nonce(): string | undefined {
-    return this._nonceFromNetwork;
+  get version(): string | undefined {
+    return this._version;
   }
 
   get online(): boolean {
@@ -91,7 +91,7 @@ export class MonitoredNode extends events.EventEmitter {
   private _consensus = new Array<number>();
   private _forgingConfigured: string | false | undefined;
   private _isForging: string | false | undefined;
-  private _nonceFromNetwork: string | undefined;
+  private _version: string | undefined;
   private timeDiffs = new Array<number>();
 
   constructor(public readonly hostname: string, ownNode: OwnNode) {
@@ -116,7 +116,7 @@ export class MonitoredNode extends events.EventEmitter {
           return;
       }
 
-      this._nonceFromNetwork = status.nonce;
+      this._version = status.version;
       this._chain.set(status.height, shortBroadhash(status));
       this.emit(MonitoredNodeEvents.Updated);
     });
