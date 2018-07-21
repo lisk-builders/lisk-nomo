@@ -145,9 +145,12 @@ export class MonitoredNode extends events.EventEmitter {
     setInterval(async () => {
       let consensus: number | undefined;
       if (this._apiStatus == ApiStatus.HttpOpen) {
-        // TODO catch errors from request
-        const statusDetailed = await this.connectedPeer.client.getStatusDetailedHTTP();
-        consensus = statusDetailed.consensus;
+        try {
+          const statusDetailed = (await this.httpApi.getStatus()).data;
+          consensus = statusDetailed.consensus;
+        } catch(_) {
+          consensus = undefined;
+        }
       } else {
         consensus = undefined;
       }
