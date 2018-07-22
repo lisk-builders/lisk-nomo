@@ -161,13 +161,13 @@ export class MonitoredNode extends events.EventEmitter {
     setInterval(async () => {
       if (this._apiStatus == ApiStatus.HttpOpen) {
         this.httpApi.getStatusForging()
-          // handle Lisk bug https://github.com/LiskHQ/lisk/issues/2058
-          .then(response => response.data ? response.data : [])
-          .then(status => {
-            if (status.length > 0) {
-              this._forgingConfigured = status[0].publicKey;
-              if (status[0].forging) {
-                this._isForging = status[0].publicKey;
+          .then(response => response.data)
+          .then(forgingStatusList => {
+            if (forgingStatusList.length > 0) {
+              const forgingStatus = forgingStatusList[0]; // ignore multi delegate nodes
+              this._forgingConfigured = forgingStatus.publicKey;
+              if (forgingStatus.forging) {
+                this._isForging = forgingStatus.publicKey;
               } else {
                 this._isForging = false;
               }

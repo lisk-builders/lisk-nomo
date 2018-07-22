@@ -15,7 +15,18 @@ export class LiskHttpApi {
   }
 
   public getStatusForging(): Promise<ResponseList<ForgingStatus>> {
-    return request(`${this.baseUrl()}/node/status/forging`, {json: true});
+    return request(`${this.baseUrl()}/node/status/forging`, {json: true})
+      .then(response => {
+        // handle Lisk bug https://github.com/LiskHQ/lisk/issues/2058
+        if (!response.data) {
+          return {
+            ...response,
+            data: []
+          }
+        }
+
+        return response;
+      });
   }
 
   private baseUrl(): string {
