@@ -35,10 +35,22 @@ export class LiskHttpApi {
   }
 }
 
+export interface TransactionsStatus {
+  readonly unconfirmed: number,
+  readonly unsigned: number,
+  readonly unprocessed: number,
+  readonly confirmed: number,
+  readonly total: number,
+}
+
 export interface Status {
   readonly broadhash: string,
   readonly consensus: number,
   readonly height: number,
+  readonly loaded: boolean,
+  readonly networkHeight: number,
+  readonly syncing: boolean,
+  readonly transactions: TransactionsStatus,
 }
 
 export interface ForgingStatus {
