@@ -219,6 +219,23 @@ export class MonitoredNode extends events.EventEmitter {
         this._isForging = undefined;
       }
     }, timePlusMinus(3000));
+
+    setInterval(() => this.cleanup(), timePlusMinus(5*60*1000));
+  }
+
+  private cleanup(): void {
+    const preserveElementsCount = 1000;
+
+    this.timeDiffs = this.timeDiffs.slice(-preserveElementsCount);
+
+    if (this._chain.size > 1.5*preserveElementsCount) {
+      const heightList = Array.from(this._chain.keys());
+      heightList.sort();
+      while (this._chain.size > preserveElementsCount) {
+        const heightToRemove = heightList.shift()!;
+        this._chain.delete(heightToRemove);
+      }
+    }
   }
 
   private async testApiStatus(): Promise<ApiStatus> {
