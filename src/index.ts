@@ -1,10 +1,19 @@
 import { MonitoredNode, OwnNode, ApiStatus, Chain, MonitoredNodeEvents } from "./monitorednode";
 import { getIp } from "./stun";
 
+function randomCharacter(): string {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  return alphabet[Math.floor(Math.random() * alphabet.length)];
+}
+
+function randomString(length: number): string {
+  return Array.from({ length: length }).map(() => randomCharacter()).join("");
+}
+
 const ownNode: OwnNode = {
   httpPort: 3000,
   wsPort: 3001,
-  nonce: "aiConi9OSo5shoot",
+  nonce: randomString(16),
 };
 
 /*
