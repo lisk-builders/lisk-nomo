@@ -4,10 +4,12 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "format": "prettier --write 'src/**/*.ts'",
     "build": "tsc",
     "start": "yarn build && node build/index.js"
   },
   "devDependencies": {
+    "prettier": "^1.13.7",
     "ts-node": "^7.0.0",
     "typescript": "^2.9.2"
   },

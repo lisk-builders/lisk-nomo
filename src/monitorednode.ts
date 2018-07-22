@@ -1,6 +1,6 @@
-import * as events from 'events';
+import * as events from "events";
 import { LiskPeer, PeerState, LiskPeerEvent } from "./external/argus/src/peers/Peer";
-import { NodeStatus, PeerInfo } from './external/argus/src/peers/LiskClient';
+import { NodeStatus, PeerInfo } from "./external/argus/src/peers/LiskClient";
 
 import { LiskHttpApi } from "./liskhttpapi";
 import { Ping } from "./ping";
@@ -23,23 +23,23 @@ export const enum ApiStatus {
 
 function timePlusMinus(ms: number): number {
   const range = 0.3; // +/- 15 %
-  return Math.floor(ms*(1-range) + ms*range*Math.random());
+  return Math.floor(ms * (1 - range) + ms * range * Math.random());
 }
 
 const shortBroadhash = (status: NodeStatus) => status.broadhash.substring(0, 6);
 
 function mostRecentPeerUpdate(peers: PeerInfo[]): Date | undefined {
   if (peers.length == 0) {
-      return undefined;
+    return undefined;
   } else {
-      const unixTimestampMs = Math.max(...peers.map(p => (p.updated || 0) as number));
-      return new Date(unixTimestampMs);
+    const unixTimestampMs = Math.max(...peers.map(p => (p.updated || 0) as number));
+    return new Date(unixTimestampMs);
   }
 }
 
 function average(array: number[], count: number = Number.POSITIVE_INFINITY) {
   const selection = array.slice(-count);
-  return selection.reduce((sum, element) => sum + element, 0 ) / selection.length;
+  return selection.reduce((sum, element) => sum + element, 0) / selection.length;
 }
 
 export const enum MonitoredNodeEvents {
@@ -96,7 +96,7 @@ export class MonitoredNode extends events.EventEmitter {
     const ping = this.wsPing;
     if (ping === undefined) return undefined;
 
-    return timeDiffMs-ping;
+    return timeDiffMs - ping;
   }
 
   private readonly httpApi: LiskHttpApi;
@@ -117,20 +117,23 @@ export class MonitoredNode extends events.EventEmitter {
     this.httpApi = new LiskHttpApi(hostname, 7000);
     this.httpsApi = new LiskHttpApi(hostname, 7000, true);
 
-    this.connectedPeer = new LiskPeer({
-      ip: hostname,
-      httpPort: 7000,
-      wsPort: 7001,
-      nonce: "",
-      nethash: "da3ed6a45429278bac2666961289ca17ad86595d33b31037615d4b8e8f158bba",
-      ownHttpPort: ownNode.httpPort,
-      ownWSPort: ownNode.wsPort,
-    }, ownNode.nonce);
+    this.connectedPeer = new LiskPeer(
+      {
+        ip: hostname,
+        httpPort: 7000,
+        wsPort: 7001,
+        nonce: "",
+        nethash: "da3ed6a45429278bac2666961289ca17ad86595d33b31037615d4b8e8f158bba",
+        ownHttpPort: ownNode.httpPort,
+        ownWSPort: ownNode.wsPort,
+      },
+      ownNode.nonce,
+    );
 
     this.connectedPeer.on(LiskPeerEvent.statusUpdated, (status: NodeStatus) => {
       if (status.height <= 1) {
-          // Height is 1 during app start. Ignore those values
-          return;
+        // Height is 1 during app start. Ignore those values
+        return;
       }
 
       this._version = status.version;
@@ -171,7 +174,7 @@ export class MonitoredNode extends events.EventEmitter {
         try {
           const statusDetailed = (await this.httpApi.getStatus()).data;
           consensus = statusDetailed.consensus;
-        } catch(_) {
+        } catch (_) {
           consensus = undefined;
         }
       } else {
@@ -186,7 +189,8 @@ export class MonitoredNode extends events.EventEmitter {
 
     setInterval(async () => {
       if (this._apiStatus == ApiStatus.HttpOpen) {
-        this.httpApi.getStatusForging()
+        this.httpApi
+          .getStatusForging()
           .then(response => response.data)
           .then(forgingStatusList => {
             if (forgingStatusList.length > 0) {
@@ -209,7 +213,7 @@ export class MonitoredNode extends events.EventEmitter {
             } else {
               throw error;
             }
-          })
+          });
       } else {
         this._forgingConfigured = undefined;
         this._isForging = undefined;

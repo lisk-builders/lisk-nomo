@@ -1,4 +1,4 @@
-import * as request from 'request-promise-native';
+import * as request from "request-promise-native";
 
 // Lisk HTTP API
 // https://app.swaggerhub.com/apis/LiskHQ/Lisk
@@ -7,55 +7,53 @@ export class LiskHttpApi {
     private readonly hostname: string,
     private readonly port: number,
     private readonly secure: boolean = false,
-  )
-  {}
+  ) {}
 
   public getStatus(): Promise<ResponseObject<Status>> {
-    return request(`${this.baseUrl()}/node/status`, {json: true});
+    return request(`${this.baseUrl()}/node/status`, { json: true });
   }
 
   public getStatusForging(): Promise<ResponseList<ForgingStatus>> {
-    return request(`${this.baseUrl()}/node/status/forging`, {json: true})
-      .then(response => {
-        // handle Lisk bug https://github.com/LiskHQ/lisk/issues/2058
-        if (!response.data) {
-          return {
-            ...response,
-            data: []
-          }
-        }
+    return request(`${this.baseUrl()}/node/status/forging`, { json: true }).then(response => {
+      // handle Lisk bug https://github.com/LiskHQ/lisk/issues/2058
+      if (!response.data) {
+        return {
+          ...response,
+          data: [],
+        };
+      }
 
-        return response;
-      });
+      return response;
+    });
   }
 
   private baseUrl(): string {
     const protocol = this.secure ? "https" : "http";
-    return `${protocol}://${this.hostname}:${this.port}/api`
+    return `${protocol}://${this.hostname}:${this.port}/api`;
   }
 }
 
 export interface TransactionsStatus {
-  readonly unconfirmed: number,
-  readonly unsigned: number,
-  readonly unprocessed: number,
-  readonly confirmed: number,
-  readonly total: number,
+  readonly unconfirmed: number;
+  readonly unsigned: number;
+  readonly unprocessed: number;
+  readonly confirmed: number;
+  readonly total: number;
 }
 
 export interface Status {
-  readonly broadhash: string,
-  readonly consensus: number,
-  readonly height: number,
-  readonly loaded: boolean,
-  readonly networkHeight: number,
-  readonly syncing: boolean,
-  readonly transactions: TransactionsStatus,
+  readonly broadhash: string;
+  readonly consensus: number;
+  readonly height: number;
+  readonly loaded: boolean;
+  readonly networkHeight: number;
+  readonly syncing: boolean;
+  readonly transactions: TransactionsStatus;
 }
 
 export interface ForgingStatus {
-  readonly forging: boolean,
-  readonly publicKey: string,
+  readonly forging: boolean;
+  readonly publicKey: string;
 }
 
 export interface ResponseObject<T> {
