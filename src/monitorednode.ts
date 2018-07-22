@@ -89,6 +89,16 @@ export class MonitoredNode extends events.EventEmitter {
     return this._wsPing;
   }
 
+  get clockDiffEstimation(): number | undefined {
+    const timeDiffMs = this.movingMinTimeDiffMs;
+    if (timeDiffMs === undefined) return undefined;
+
+    const ping = this.wsPing;
+    if (ping === undefined) return undefined;
+
+    return timeDiffMs-ping;
+  }
+
   private readonly httpApi: LiskHttpApi;
   private readonly httpsApi: LiskHttpApi;
   private readonly connectedPeer: LiskPeer;
@@ -140,7 +150,7 @@ export class MonitoredNode extends events.EventEmitter {
     setInterval(async () => {
       try {
         const ping = await new Ping(this.hostname, 7001).run();
-        this._wsPing = ping.avg;
+        this._wsPing = Number.isNaN(ping.avg) ? undefined : ping.avg;
       } catch {
         this._wsPing = undefined;
       }

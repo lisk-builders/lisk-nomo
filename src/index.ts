@@ -121,7 +121,7 @@ function statusLine(node: MonitoredNode): string {
     formatSmallTime(node.wsPing, "⚠ "),
     online,
     (node.version || "").padStart(10),
-    formatSmallTime(node.movingMinTimeDiffMs),
+    formatSmallTime(node.clockDiffEstimation),
     printHead(node.chain).padEnd(20),
     api,
     consensus,
