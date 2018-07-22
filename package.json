@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node src/index.ts"
+    "build": "tsc",
+    "start": "yarn build && node build/index.js"
   },
   "devDependencies": {
     "ts-node": "^7.0.0",

@@ -1,13 +1,16 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "lib": [
-            "es2017"
-        ],
-        "target": "es6",
-        "strictNullChecks": true
-    },
-    "include": [
-        "src/index.ts"
+  "compilerOptions": {
+    "module": "commonjs",
+    "lib": [
+      "es2017"
     ],
+    "target": "es6",
+    "strictNullChecks": true,
+    "baseUrl": ".",
+    "outDir": "build",
+    "rootDir": "src"
+  },
+  "include": [
+      "src/index.ts"
+  ],
 }
