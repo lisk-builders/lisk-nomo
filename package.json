@@ -18,6 +18,7 @@
     "socketcluster": "^14.0.4",
     "socketcluster-client": "^13.0.1",
     "stun": "^1.2.0",
+    "tcp-ping": "^0.1.1",
     "underscore": "^1.9.1",
     "winston": "^3.0.0"
   }

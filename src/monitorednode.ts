@@ -3,6 +3,7 @@ import { LiskPeer, PeerState, LiskPeerEvent } from "./external/argus/src/peers/P
 import { NodeStatus, PeerInfo } from './external/argus/src/peers/LiskClient';
 
 import { LiskHttpApi } from "./liskhttpapi";
+import { Ping } from "./ping";
 
 export type Chain = Map<number, string>; // height -> broadhash
 
@@ -84,10 +85,15 @@ export class MonitoredNode extends events.EventEmitter {
     else return Math.min(...this.timeDiffs.slice(-500));
   }
 
+  get wsPing(): number | undefined {
+    return this._wsPing;
+  }
+
   private readonly httpApi: LiskHttpApi;
   private readonly httpsApi: LiskHttpApi;
   private readonly connectedPeer: LiskPeer;
   private readonly _chain: Chain = new Map<number, string>(); // height -> broadhash
+  private _wsPing: number | undefined;
   private _apiStatus: ApiStatus = ApiStatus.Unknown;
   private _consensus = new Array<number>();
   private _forgingConfigured: string | false | undefined;
@@ -130,6 +136,16 @@ export class MonitoredNode extends events.EventEmitter {
         this.emit(MonitoredNodeEvents.Updated);
       }
     });
+
+    setInterval(async () => {
+      try {
+        const ping = await new Ping(this.hostname, 7001).run();
+        this._wsPing = ping.avg;
+      } catch {
+        this._wsPing = undefined;
+      }
+      this.emit(MonitoredNodeEvents.Updated);
+    }, timePlusMinus(5000));
 
     setInterval(async () => {
       const newValue = await this.testApiStatus();

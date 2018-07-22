@@ -100,10 +100,14 @@ function describeApiStatus(status: ApiStatus) {
   }
 }
 
-function formatTimeDiff(ms: number | undefined): string {
-  if (ms === undefined) return "".padStart(5)
-  else if (ms > -1000 && ms < 1000) return ms.toString().padStart(3) + "ms";
-  else return (ms/1000).toFixed(1).padStart(4) + "s";
+function formatSmallTime(ms: number | undefined, undefinedString: string = ""): string {
+  if (ms === undefined || Number.isNaN(ms)) {
+    return undefinedString.padStart(5);
+  }
+
+  const roundedMs = Math.round(ms);
+  if (roundedMs > -1000 && roundedMs < 1000) return roundedMs.toString().padStart(3) + "ms";
+  else return (roundedMs/1000).toFixed(1).padStart(4) + "s";
 }
 
 function statusLine(node: MonitoredNode): string {
@@ -114,9 +118,10 @@ function statusLine(node: MonitoredNode): string {
   const consensus = (typeof node.movingAverageConsensus == "undefined" ? "?" : node.movingAverageConsensus.toString()).padStart(3);
   return [
     nameWidth(node.hostname, 22),
+    formatSmallTime(node.wsPing, "⚠ "),
     online,
     (node.version || "").padStart(10),
-    formatTimeDiff(node.movingMinTimeDiffMs),
+    formatSmallTime(node.movingMinTimeDiffMs),
     printHead(node.chain).padEnd(20),
     api,
     consensus,
