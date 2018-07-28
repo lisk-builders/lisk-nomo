@@ -124,6 +124,10 @@ function statusLine(node: MonitoredNode): string {
     ? "?"
     : node.movingAverageConsensus.toString()
   ).padStart(3);
+  const heightFromApi = (typeof node.heightFromApi == "undefined"
+    ? "?"
+    : node.heightFromApi.toString()
+  ).padStart(7);
   return [
     nameWidth(node.hostname, 22),
     formatSmallTime(node.wsPing, "⚠ "),
@@ -133,6 +137,7 @@ function statusLine(node: MonitoredNode): string {
     printHead(node.chain).padEnd(20),
     api,
     consensus,
+    heightFromApi,
     forgingStatus(node),
     ok(node) ? "ok" : "",
   ].join("  ");

@@ -85,6 +85,10 @@ export class MonitoredNode extends events.EventEmitter {
     else return Math.min(...this.timeDiffs.slice(-500));
   }
 
+  get heightFromApi(): number | undefined {
+    return this._heightFromApi;
+  }
+
   get wsPing(): number | undefined {
     return this._wsPing;
   }
@@ -106,6 +110,7 @@ export class MonitoredNode extends events.EventEmitter {
   private _wsPing: number | undefined;
   private _apiStatus: ApiStatus = ApiStatus.Unknown;
   private _consensus = new Array<number>();
+  private _heightFromApi: number | undefined;
   private _forgingConfigured: string | false | undefined;
   private _isForging: string | false | undefined;
   private _version: string | undefined;
@@ -170,15 +175,24 @@ export class MonitoredNode extends events.EventEmitter {
 
     setInterval(async () => {
       let consensus: number | undefined;
+      let height: number | undefined;
       if (this._apiStatus == ApiStatus.HttpOpen) {
         try {
           const statusDetailed = (await this.httpApi.getStatus()).data;
           consensus = statusDetailed.consensus;
+          height = statusDetailed.height;
         } catch (_) {
           consensus = undefined;
+          height = undefined;
         }
       } else {
         consensus = undefined;
+        height = undefined;
+      }
+
+      if (this._heightFromApi != height) {
+        this._heightFromApi = height;
+        this.emit(MonitoredNodeEvents.Updated);
       }
 
       if (consensus !== undefined) {
