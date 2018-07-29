@@ -88,14 +88,20 @@ export class Manager {
       job = {
         disable: disableJob,
       }
+    }
 
-      if (this.job && _.isEqual(this.job, job)) {
-        // wait for job execution
-        countdown = (this.jobExecTime!.getTime() - Date.now()) / 1000;
-      } else {
+    if (this.job && _.isEqual(this.job, job)) {
+      // wait for job execution
+      countdown = (this.jobExecTime!.getTime() - Date.now()) / 1000;
+    } else {
+      if (job) {
         // new job
         this.job = job;
         this.jobExecTime = new Date(Date.now() + jobExecutionDelay*1000);
+      } else {
+        // job canceled
+        this.job = undefined;
+        this.jobExecTime = undefined;
       }
     }
 
