@@ -95,8 +95,9 @@ export class MonitoredNode extends events.EventEmitter implements FullNodeStatus
     return Math.floor(average(this.timeDiffs, 500));
   }
 
+  // undefined until at least 50 data points are collected
   get movingMinTimeDiffMs(): number | undefined {
-    if (this.timeDiffs.length == 0) return undefined;
+    if (this.timeDiffs.length < 50) return undefined;
     else return Math.min(...this.timeDiffs.slice(-500));
   }
 
