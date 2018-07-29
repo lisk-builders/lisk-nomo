@@ -97,13 +97,13 @@ function ok(node: MonitoredNode) {
 function describeApiStatus(status: ApiStatus) {
   switch (status) {
     case ApiStatus.Unknown:
-      return "unknown";
+      return "?";
     case ApiStatus.Closed:
-      return "API closed";
+      return "closed";
     case ApiStatus.HttpsOpen:
-      return "HTTPs open";
+      return "HTTPs";
     case ApiStatus.HttpOpen:
-      return "HTTP open";
+      return "HTTP";
   }
 }
 
@@ -119,7 +119,7 @@ function formatSmallTime(ms: number | undefined, undefinedString: string = ""): 
 
 function statusLine(node: MonitoredNode): string {
   const online = node.online ? "online " : "offline";
-  const api = describeApiStatus(node.apiStatus).padEnd(10);
+  const api = describeApiStatus(node.apiStatus).padEnd(6);
   const consensus = (typeof node.movingAverageConsensus == "undefined"
     ? "?"
     : node.movingAverageConsensus.toString()
@@ -200,9 +200,9 @@ const logTitles = [
     "chain  ".padEnd(14),
   ],
   [
-    "   ".padEnd(10),
-    "   ".padEnd(10),
-    "API".padEnd(10),
+    "   ".padEnd(6),
+    "   ".padEnd(6),
+    "API".padEnd(6),
   ],
   [
     "con",
