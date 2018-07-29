@@ -136,8 +136,8 @@ function statusLine(node: MonitoredNode): string {
     formatSmallTime(node.clockDiffEstimation),
     printHead(node.chain).padEnd(14),
     api,
-    consensus,
     bestHeight,
+    consensus,
     forgingStatus(node),
     ok(node) ? "ok" : "",
   ].join("  ");
@@ -205,14 +205,14 @@ const logTitles = [
     "API".padEnd(6),
   ],
   [
-    "con",
-    "sen",
-    "sus",
-  ],
-  [
     "WS/API ",
     "best   ",
     "height ",
+  ],
+  [
+    "con",
+    "sen",
+    "sus",
   ],
   [
     "       ",
