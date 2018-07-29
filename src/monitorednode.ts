@@ -2,7 +2,7 @@ import * as events from "events";
 import { LiskPeer, PeerState, LiskPeerEvent } from "./external/argus/src/peers/Peer";
 import { NodeStatus, PeerInfo } from "./external/argus/src/peers/LiskClient";
 
-import { LiskHttpApi } from "./liskhttpapi";
+import { ExtendedHttpApi } from "./extendedhttpapi";
 import { Ping } from "./ping";
 
 export type Chain = Map<number, string>; // height -> broadhash
@@ -124,8 +124,8 @@ export class MonitoredNode extends events.EventEmitter implements FullNodeStatus
     return timeDiffMs - ping;
   }
 
-  private readonly httpApi: LiskHttpApi;
-  private readonly httpsApi: LiskHttpApi;
+  private readonly httpApi: ExtendedHttpApi;
+  private readonly httpsApi: ExtendedHttpApi;
   private readonly connectedPeer: LiskPeer;
   private readonly _chain: Chain = new Map<number, string>(); // height -> broadhash
   private _wsPing: number | undefined;
@@ -141,8 +141,8 @@ export class MonitoredNode extends events.EventEmitter implements FullNodeStatus
   constructor(public readonly hostname: string, ownNode: OwnNode) {
     super();
 
-    this.httpApi = new LiskHttpApi(hostname, 7000);
-    this.httpsApi = new LiskHttpApi(hostname, 7000, true);
+    this.httpApi = new ExtendedHttpApi(hostname, 7000);
+    this.httpsApi = new ExtendedHttpApi(hostname, 7000, true);
 
     this.connectedPeer = new LiskPeer(
       {
@@ -201,7 +201,7 @@ export class MonitoredNode extends events.EventEmitter implements FullNodeStatus
       let height: number | undefined;
       if (this._apiStatus == ApiStatus.HttpOpen) {
         try {
-          const statusDetailed = (await this.httpApi.getStatus()).data;
+          const statusDetailed = (await this.httpApi.getNodeStatus()).data;
           consensus = statusDetailed.consensus;
           height = statusDetailed.height;
         } catch (_) {
@@ -277,11 +277,11 @@ export class MonitoredNode extends events.EventEmitter implements FullNodeStatus
 
   private async testApiStatus(): Promise<ApiStatus> {
     try {
-      await this.httpsApi.getStatus();
+      await this.httpsApi.getNodeStatus();
       return ApiStatus.HttpsOpen;
     } catch (_) {
       try {
-        await this.httpApi.getStatus();
+        await this.httpApi.getNodeStatus();
         return ApiStatus.HttpOpen;
       } catch (_) {
         return ApiStatus.Closed;
