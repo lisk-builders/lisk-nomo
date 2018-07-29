@@ -132,7 +132,7 @@ function describeApiStatus(status: ApiStatus) {
   }
 }
 
-function statusLine(node: FullNodeStatus, canForge: boolean): string {
+function statusLine(node: FullNodeStatus, canForge: boolean, countdown: number | undefined): string {
   const online = node.online ? "online " : "offline";
   const api = describeApiStatus(node.apiStatus).padEnd(6);
   const consensus = (typeof node.movingAverageConsensus == "undefined"
@@ -154,11 +154,13 @@ function statusLine(node: FullNodeStatus, canForge: boolean): string {
     bestHeight,
     consensus,
     forgingStatus(node),
-    canForge ? "ok" : "",
+    countdown
+      ? Math.round(countdown)
+      : (canForge ? "ok" : ""),
   ].join("  ");
 }
 
-export function logStatus(nodes: ReadonlyArray<FullNodeStatus>, observation: ObservationResult, ip: string | undefined) {
+export function logStatus(nodes: ReadonlyArray<FullNodeStatus>, observation: ObservationResult | undefined, ip: string | undefined) {
   const readyToForge = nodes
     .filter(n => typeof n.forgingConfigured === "string")
     .sort(compareNodeQuality);
@@ -175,12 +177,24 @@ export function logStatus(nodes: ReadonlyArray<FullNodeStatus>, observation: Obs
   console.log("".padEnd(115, "-"));
 
   for (const node of readyToForge) {
-    console.log(statusLine(node, observation.canForge.get(node.hostname) || false));
+    let canForgeObservation = false;
+    let countdown: number | undefined;
+    if (observation) {
+      canForgeObservation = observation.canForge.get(node.hostname) || false;
+      countdown = observation.job && observation.job.disable.includes(node.hostname) ? observation.countdown : undefined;
+    }
+    console.log(statusLine(node, canForgeObservation, countdown));
   }
   if (readyToForge.length > 0 && other.length > 0) {
     console.log("");
   }
   for (const node of other) {
-    console.log(statusLine(node, observation.canForge.get(node.hostname) || false));
+    let canForgeObservation = false;
+    let countdown: number | undefined;
+    if (observation) {
+      canForgeObservation = observation.canForge.get(node.hostname) || false;
+      countdown = observation.job && observation.job.disable.includes(node.hostname) ? observation.countdown : undefined;
+    }
+    console.log(statusLine(node, canForgeObservation, countdown));
   }
 }

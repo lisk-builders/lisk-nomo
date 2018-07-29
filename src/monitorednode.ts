@@ -1,8 +1,9 @@
 import * as events from "events";
 import { LiskPeer, PeerState, LiskPeerEvent } from "./external/argus/src/peers/Peer";
 import { NodeStatus, PeerInfo } from "./external/argus/src/peers/LiskClient";
+import { ResponseList } from "./external/argus/src/lib/HttpApi";
 
-import { ExtendedHttpApi } from "./extendedhttpapi";
+import { ExtendedHttpApi, ForgingStatus } from "./extendedhttpapi";
 import { Ping } from "./ping";
 
 export type Chain = Map<number, string>; // height -> broadhash
@@ -230,18 +231,7 @@ export class MonitoredNode extends events.EventEmitter implements FullNodeStatus
           .getStatusForging()
           .then(response => response.data)
           .then(forgingStatusList => {
-            if (forgingStatusList.length > 0) {
-              const forgingStatus = forgingStatusList[0]; // ignore multi delegate nodes
-              this._forgingConfigured = forgingStatus.publicKey;
-              if (forgingStatus.forging) {
-                this._isForging = forgingStatus.publicKey;
-              } else {
-                this._isForging = false;
-              }
-            } else {
-              this._forgingConfigured = false;
-              this._isForging = false;
-            }
+            this.processNewForgingStatus(forgingStatusList);
           })
           .catch(error => {
             if (error.statusCode == 403) {
@@ -258,6 +248,32 @@ export class MonitoredNode extends events.EventEmitter implements FullNodeStatus
     }, timePlusMinus(3000));
 
     setInterval(() => this.cleanup(), timePlusMinus(5*60*1000));
+  }
+
+  public async disableForging(password: string): Promise<ResponseList<ForgingStatus> | undefined> {
+    if (typeof this.isForging === "string") {
+      const pubkey = this.isForging;
+      const response = await this.httpApi.disableForging(pubkey, password);
+      this.processNewForgingStatus(response.data);
+      return response;
+    } else {
+      return undefined;
+    }
+  }
+
+  private processNewForgingStatus(forgingStatusList: ForgingStatus[]) {
+    if (forgingStatusList.length > 0) {
+      const forgingStatus = forgingStatusList[0]; // ignore multi delegate nodes
+      this._forgingConfigured = forgingStatus.publicKey;
+      if (forgingStatus.forging) {
+        this._isForging = forgingStatus.publicKey;
+      } else {
+        this._isForging = false;
+      }
+    } else {
+      this._forgingConfigured = false;
+      this._isForging = false;
+    }
   }
 
   private cleanup(): void {

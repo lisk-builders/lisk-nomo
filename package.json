@@ -9,6 +9,7 @@
     "start": "yarn build && node build/index.js"
   },
   "devDependencies": {
+    "@types/argparse": "^1.0.34",
     "@types/request": "^2.47.1",
     "@types/request-promise-native": "^1.0.15",
     "prettier": "^1.13.7",
@@ -17,6 +18,7 @@
   },
   "dependencies": {
     "@types/node": "^10.5.2",
+    "argparse": "^1.0.10",
     "events": "^3.0.0",
     "request-promise-native": "^1.0.5",
     "semver": "^5.5.0",

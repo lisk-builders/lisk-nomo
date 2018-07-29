@@ -3,6 +3,17 @@ import { getIp } from "./stun";
 import { logStatus } from "./display";
 import { Manager } from "./manager";
 
+import { ArgumentParser } from "argparse";
+
+const parser = new ArgumentParser({ description: "Lisk node monitor"})
+parser.addArgument("--password", { help: "the password to enable/disable forging"});
+parser.addArgument("nodes", {
+  nargs: "*",
+  metavar: "node",
+  help: "nodes to monitor (IP or hostname)"
+});
+const args = parser.parseArgs();
+
 function randomCharacter(): string {
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   return alphabet[Math.floor(Math.random() * alphabet.length)];
@@ -19,10 +30,8 @@ const ownNode: OwnNode = {
 };
 
 const nodes: ReadonlyArray<MonitoredNode> = [
-  new MonitoredNode("node01.testnet.lisk", ownNode),
-  new MonitoredNode("node02.testnet.lisk", ownNode),
-  new MonitoredNode("wiki.lisk.prolina.org", ownNode),
   new MonitoredNode("testnet.lisk.io", ownNode),
+  ...(args.nodes as string[]).map(host => new MonitoredNode(host, ownNode)),
 ];
 
 let ip: string | undefined;
@@ -35,11 +44,12 @@ setInterval(() => {
     .catch(console.warn);
 }, 60 * 1000);
 
-const manager = new Manager();
+
+const manager = args.password ? new Manager(nodes, args.password) : undefined;
 let lastOutput = 0;
 for (const node of nodes) {
   node.on(MonitoredNodeEvents.Updated, () => {
-    let observation = manager.observe(nodes);
+    let observation = manager ? manager.observe(nodes) : undefined;
 
     if (Date.now() - lastOutput > 500) {
       logStatus(nodes, observation, ip);
