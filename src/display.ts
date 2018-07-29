@@ -1,4 +1,5 @@
 import { FullNodeStatus, ApiStatus, Chain } from "./monitorednode";
+import { ObservationResult } from "./manager";
 
 function compareNodeQuality(a: FullNodeStatus, b: FullNodeStatus): number {
   const aKiloHeight = Math.floor((a.bestHeight || 0) / 1000);
@@ -118,11 +119,6 @@ function forgingStatus(node: FullNodeStatus): string {
   return out.padEnd(16);
 }
 
-function ok(node: FullNodeStatus) {
-  // Lisk Core minBroadhashConsensus is 51
-  return node.online && node.forgingConfigured && (node.movingAverageConsensus || 0) >= 51;
-}
-
 function describeApiStatus(status: ApiStatus) {
   switch (status) {
     case ApiStatus.Unknown:
@@ -136,7 +132,7 @@ function describeApiStatus(status: ApiStatus) {
   }
 }
 
-function statusLine(node: FullNodeStatus): string {
+function statusLine(node: FullNodeStatus, canForge: boolean): string {
   const online = node.online ? "online " : "offline";
   const api = describeApiStatus(node.apiStatus).padEnd(6);
   const consensus = (typeof node.movingAverageConsensus == "undefined"
@@ -158,11 +154,11 @@ function statusLine(node: FullNodeStatus): string {
     bestHeight,
     consensus,
     forgingStatus(node),
-    ok(node) ? "ok" : "",
+    canForge ? "ok" : "",
   ].join("  ");
 }
 
-export function logStatus(nodes: ReadonlyArray<FullNodeStatus>, ip: string | undefined) {
+export function logStatus(nodes: ReadonlyArray<FullNodeStatus>, observation: ObservationResult, ip: string | undefined) {
   const readyToForge = nodes
     .filter(n => typeof n.forgingConfigured === "string")
     .sort(compareNodeQuality);
@@ -179,12 +175,12 @@ export function logStatus(nodes: ReadonlyArray<FullNodeStatus>, ip: string | und
   console.log("".padEnd(115, "-"));
 
   for (const node of readyToForge) {
-    console.log(statusLine(node));
+    console.log(statusLine(node, observation.canForge.get(node.hostname) || false));
   }
   if (readyToForge.length > 0 && other.length > 0) {
     console.log("");
   }
   for (const node of other) {
-    console.log(statusLine(node));
+    console.log(statusLine(node, observation.canForge.get(node.hostname) || false));
   }
 }

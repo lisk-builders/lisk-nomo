@@ -35,12 +35,14 @@ setInterval(() => {
     .catch(console.warn);
 }, 60 * 1000);
 
-
+const manager = new Manager();
 let lastOutput = 0;
 for (const node of nodes) {
   node.on(MonitoredNodeEvents.Updated, () => {
+    let observation = manager.observe(nodes);
+
     if (Date.now() - lastOutput > 500) {
-      logStatus(nodes, ip);
+      logStatus(nodes, observation, ip);
       lastOutput = Date.now();
     }
   });
