@@ -55,7 +55,7 @@ const printHead = (chain: Chain): string => {
     chainDescription = `${max}/${head}`;
   }
 
-  return `Head{${chainDescription}}`;
+  return chainDescription;
 };
 
 const nodes: ReadonlyArray<MonitoredNode> = [
@@ -79,14 +79,14 @@ function forgingStatus(node: MonitoredNode): string {
     out = `forging (${node.isForging.substring(0, 6)})`;
   } else {
     if (typeof node.forgingConfigured === "undefined") {
-      out = "forging status unknown";
+      out = "status unknown";
     } else if (node.forgingConfigured === false) {
-      out = "forging not configured";
+      out = "not configured";
     } else {
-      out = `ready to forge (${node.forgingConfigured.substring(0, 6)})`;
+      out = `ready (${node.forgingConfigured.substring(0, 6)})`;
     }
   }
-  return out.padEnd(23);
+  return out.padEnd(16);
 }
 
 function ok(node: MonitoredNode) {
@@ -134,7 +134,7 @@ function statusLine(node: MonitoredNode): string {
     online,
     (node.version || "").padStart(10),
     formatSmallTime(node.clockDiffEstimation),
-    printHead(node.chain).padEnd(20),
+    printHead(node.chain).padEnd(14),
     api,
     consensus,
     heightFromApi,
@@ -163,6 +163,59 @@ setInterval(() => {
     .catch(console.warn);
 }, 60 * 1000);
 
+const logTitles = [
+  [
+    "".padStart(22),
+    "".padStart(22),
+    "".padStart(22),
+  ],
+  [
+    "     ",
+    "     ",
+    "ping ",
+  ],
+  [
+    "       ",
+    "       ",
+    "socket ",
+  ],
+  [
+    "          ",
+    "          ",
+    "version   ",
+  ],
+  [
+    "est. ",
+    "clock",
+    "diff ",
+  ],
+  [
+    "WS     ".padEnd(14),
+    "height/".padEnd(14),
+    "chain  ".padEnd(14),
+  ],
+  [
+    "   ".padEnd(10),
+    "   ".padEnd(10),
+    "API".padEnd(10),
+  ],
+  [
+    "con",
+    "sen",
+    "sus",
+  ],
+  [
+    "       ",
+    "API    ",
+    "height ",
+  ],
+  [
+    "       ",
+    "       ",
+    "forging",
+  ],
+];
+
 function logStatus() {
   const readyToForge = nodes
     .filter(n => typeof n.forgingConfigured === "string")
@@ -173,20 +226,20 @@ function logStatus() {
   console.log("========================");
   console.log(`Status time ${new Date(Date.now()).toISOString()} | Monitoring IP: ${ip}`);
   console.log("");
-  console.log("Nodes ready to forge");
-  for (const node of readyToForge) {
-    console.log("  " + statusLine(node));
-  }
-  if (readyToForge.length === 0) {
-    console.log("  none");
-  }
 
-  console.log("Other nodes");
-  for (const node of other) {
-    console.log("  " + statusLine(node));
+  for (let row = 0; row < 3; ++row) {
+    console.log(logTitles.map(cols => cols[row]).join("  "));
   }
-  if (other.length === 0) {
-    console.log("  none");
+  console.log("".padEnd(115, "-"));
+
+  for (const node of readyToForge) {
+    console.log(statusLine(node));
+  }
+  if (readyToForge.length > 0 && other.length > 0) {
+    console.log("");
+  }
+  for (const node of other) {
+    console.log(statusLine(node));
   }
 }
 
