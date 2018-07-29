@@ -254,7 +254,7 @@ export class MonitoredNode extends events.EventEmitter implements FullNodeStatus
   public async enableForging(password: string): Promise<ResponseList<ForgingStatus> | undefined> {
     if (typeof this.forgingConfigured === "string") {
       const pubkey = this.forgingConfigured;
-      const response = await this.httpApi.enableForging(pubkey, password);
+      const response = await this.httpApi.updateForging(true, pubkey, password);
       this.processNewForgingStatus(response.data);
       return response;
     } else {
@@ -265,7 +265,7 @@ export class MonitoredNode extends events.EventEmitter implements FullNodeStatus
   public async disableForging(password: string): Promise<ResponseList<ForgingStatus> | undefined> {
     if (typeof this.isForging === "string") {
       const pubkey = this.isForging;
-      const response = await this.httpApi.disableForging(pubkey, password);
+      const response = await this.httpApi.updateForging(false, pubkey, password);
       this.processNewForgingStatus(response.data);
       return response;
     } else {
