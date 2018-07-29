@@ -7,18 +7,32 @@ import { Ping } from "./ping";
 
 export type Chain = Map<number, string>; // height -> broadhash
 
-export interface OwnNode {
-  readonly httpPort: number;
-  readonly wsPort: number;
-  readonly nonce: string;
-}
-
 export const enum ApiStatus {
   // value represents a quality value for comparison (higher is better)
   HttpsOpen = 300,
   HttpOpen = 200,
   Closed = 100,
   Unknown = 0,
+}
+
+export interface FullNodeStatus {
+  readonly online: boolean;
+  readonly version: string | undefined;
+  readonly wsPing: number | undefined;
+  readonly chain: Chain;
+  readonly clockDiffEstimation: number | undefined;
+  readonly apiStatus: ApiStatus;
+  readonly bestHeight: number | undefined;
+  readonly movingAverageConsensus: number | undefined;
+  readonly forgingConfigured: string | false | undefined; // string is the pubkey
+  readonly isForging: string | false | undefined; // string is the pubkey
+  readonly hostname: string;
+}
+
+export interface OwnNode {
+  readonly httpPort: number;
+  readonly wsPort: number;
+  readonly nonce: string;
 }
 
 function timePlusMinus(ms: number): number {
@@ -46,7 +60,7 @@ export const enum MonitoredNodeEvents {
   Updated = "updated",
 }
 
-export class MonitoredNode extends events.EventEmitter {
+export class MonitoredNode extends events.EventEmitter implements FullNodeStatus {
   get chain(): Chain {
     return this._chain;
   }
