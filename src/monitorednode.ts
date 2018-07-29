@@ -89,6 +89,13 @@ export class MonitoredNode extends events.EventEmitter {
     return this._heightFromApi;
   }
 
+  get bestHeight(): number | undefined {
+    if (this._heightFromApi === undefined && this._heightFromWs === undefined) {
+      return undefined;
+    }
+    return Math.max(this._heightFromApi || 0, this._heightFromWs || 0);
+  }
+
   get wsPing(): number | undefined {
     return this._wsPing;
   }
@@ -111,6 +118,7 @@ export class MonitoredNode extends events.EventEmitter {
   private _apiStatus: ApiStatus = ApiStatus.Unknown;
   private _consensus = new Array<number>();
   private _heightFromApi: number | undefined;
+  private _heightFromWs: number | undefined;
   private _forgingConfigured: string | false | undefined;
   private _isForging: string | false | undefined;
   private _version: string | undefined;
@@ -142,6 +150,7 @@ export class MonitoredNode extends events.EventEmitter {
       }
 
       this._version = status.version;
+      this._heightFromWs = status.height;
       this._chain.set(status.height, shortBroadhash(status));
       this.emit(MonitoredNodeEvents.Updated);
     });

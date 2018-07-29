@@ -124,9 +124,9 @@ function statusLine(node: MonitoredNode): string {
     ? "?"
     : node.movingAverageConsensus.toString()
   ).padStart(3);
-  const heightFromApi = (typeof node.heightFromApi == "undefined"
+  const bestHeight = (typeof node.bestHeight == "undefined"
     ? "?"
-    : node.heightFromApi.toString()
+    : node.bestHeight.toString()
   ).padStart(7);
   return [
     nameWidth(node.hostname, 22),
@@ -137,15 +137,20 @@ function statusLine(node: MonitoredNode): string {
     printHead(node.chain).padEnd(14),
     api,
     consensus,
-    heightFromApi,
+    bestHeight,
     forgingStatus(node),
     ok(node) ? "ok" : "",
   ].join("  ");
 }
 
 function compareNodeQuality(a: MonitoredNode, b: MonitoredNode): number {
+  const aKiloHeight = Math.floor((a.bestHeight || 0) / 1000);
+  const bKiloHeight = Math.floor((b.bestHeight || 0) / 1000);
+
   if (a.online && !b.online) return -1;
   if (!a.online && b.online) return 1;
+  if (aKiloHeight > bKiloHeight) return -1;
+  if (aKiloHeight < bKiloHeight) return 1;
   if (a.apiStatus > b.apiStatus) return -1;
   if (a.apiStatus < b.apiStatus) return 1;
   if (a.forgingConfigured !== undefined && b.forgingConfigured === undefined) return -1;
@@ -205,8 +210,8 @@ const logTitles = [
     "sus",
   ],
   [
-    "       ",
-    "API    ",
+    "WS/API ",
+    "best   ",
     "height ",
   ],
   [
