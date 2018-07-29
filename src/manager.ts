@@ -4,6 +4,7 @@ import * as _ from "underscore";
 const jobExecutionDelay = 15; // seconds
 
 export interface ManagerJob {
+  readonly enable: string[];
   readonly disable: string[];
 }
 
@@ -43,6 +44,19 @@ export class Manager {
     setInterval(() => {
       if (this.jobExecTime && this.job && Date.now() >= this.jobExecTime.getTime()) {
 
+        for (const hostname of this.job.enable) {
+          const execution = nodes.find(n => n.hostname === hostname)!.enableForging(this.forgingPassword);
+          execution
+              .then(result => {
+                if (!result) {
+                  // why did this happen
+                } else {
+                  // do something with result
+                }
+              })
+              .catch(console.warn);
+        }
+
         for (const hostname of this.job.disable) {
           const execution = nodes.find(n => n.hostname === hostname)!.disableForging(this.forgingPassword);
           execution
@@ -67,25 +81,46 @@ export class Manager {
   public observe(nodes: ReadonlyArray<FullNodeStatus>): ObservationResult {
     const canForge = new Map<string, boolean>();
     const forgingNodes = new Array<FullNodeStatus>();
+    const forgingConfiguredNodes = new Array<FullNodeStatus>();
     const disableJob = new Array<string>();
+    const enableJob = new Array<string>();
+
     for (const node of nodes) {
       canForge.set(node.hostname, Manager.canForge(node));
       if (node.isForging) {
         forgingNodes.push(node);
       }
+      if (typeof node.forgingConfigured === "string") {
+        forgingConfiguredNodes.push(node);
+      }
     }
 
-    forgingNodes.sort(compareNodeQuality);
+    if (forgingNodes.length > 0) {
+      forgingNodes.sort(compareNodeQuality);
 
-    for (let i = 1; i < forgingNodes.length; ++i) {
-      disableJob.push(forgingNodes[i].hostname);
+      // disable additional forgers
+      for (let i = 1; i < forgingNodes.length; ++i) {
+        disableJob.push(forgingNodes[i].hostname);
+      }
+
+      // disable best forger as well if unable to forge
+      if (!Manager.canForge(forgingNodes[0])) {
+        disableJob.push(forgingNodes[0].hostname);
+      }
+    } else {
+      // no one is forging. Can we change that?
+      if (forgingConfiguredNodes.length > 0) {
+        forgingConfiguredNodes.sort(compareNodeQuality);
+        enableJob.push(forgingConfiguredNodes[0].hostname);
+      }
     }
 
     let job: ManagerJob | undefined;
     let countdown: number | undefined;
 
-    if (disableJob.length > 0) {
+    if (disableJob.length > 0 || enableJob.length > 0) {
       job = {
+        enable: enableJob,
         disable: disableJob,
       }
     }

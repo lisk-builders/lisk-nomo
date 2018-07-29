@@ -181,7 +181,12 @@ export function logStatus(nodes: ReadonlyArray<FullNodeStatus>, observation: Obs
     let countdown: number | undefined;
     if (observation) {
       canForgeObservation = observation.canForge.get(node.hostname) || false;
-      countdown = observation.job && observation.job.disable.includes(node.hostname) ? observation.countdown : undefined;
+      if (observation.job) {
+        const job = observation.job;
+        countdown = [...job.enable, ...job.disable].includes(node.hostname)
+          ? observation.countdown
+          : undefined;
+      }
     }
     console.log(statusLine(node, canForgeObservation, countdown));
   }
@@ -193,7 +198,12 @@ export function logStatus(nodes: ReadonlyArray<FullNodeStatus>, observation: Obs
     let countdown: number | undefined;
     if (observation) {
       canForgeObservation = observation.canForge.get(node.hostname) || false;
-      countdown = observation.job && observation.job.disable.includes(node.hostname) ? observation.countdown : undefined;
+      if (observation.job) {
+        const job = observation.job;
+        countdown = [...job.enable, ...job.disable].includes(node.hostname)
+          ? observation.countdown
+          : undefined;
+      }
     }
     console.log(statusLine(node, canForgeObservation, countdown));
   }

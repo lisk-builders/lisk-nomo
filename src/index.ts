@@ -29,10 +29,7 @@ const ownNode: OwnNode = {
   nonce: randomString(16),
 };
 
-const nodes: ReadonlyArray<MonitoredNode> = [
-  new MonitoredNode("testnet.lisk.io", ownNode),
-  ...(args.nodes as string[]).map(host => new MonitoredNode(host, ownNode)),
-];
+const nodes: ReadonlyArray<MonitoredNode> = (args.nodes as string[]).map(host => new MonitoredNode(host, ownNode));
 
 let ip: string | undefined;
 getIp()

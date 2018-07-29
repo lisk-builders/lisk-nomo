@@ -250,6 +250,17 @@ export class MonitoredNode extends events.EventEmitter implements FullNodeStatus
     setInterval(() => this.cleanup(), timePlusMinus(5*60*1000));
   }
 
+  public async enableForging(password: string): Promise<ResponseList<ForgingStatus> | undefined> {
+    if (typeof this.forgingConfigured === "string") {
+      const pubkey = this.forgingConfigured;
+      const response = await this.httpApi.enableForging(pubkey, password);
+      this.processNewForgingStatus(response.data);
+      return response;
+    } else {
+      return undefined;
+    }
+  }
+
   public async disableForging(password: string): Promise<ResponseList<ForgingStatus> | undefined> {
     if (typeof this.isForging === "string") {
       const pubkey = this.isForging;
