@@ -5,12 +5,12 @@ import { Manager } from "./manager";
 
 import { ArgumentParser } from "argparse";
 
-const parser = new ArgumentParser({ description: "Lisk node monitor"})
-parser.addArgument("--password", { help: "the password to enable/disable forging"});
+const parser = new ArgumentParser({ description: "Lisk node monitor" });
+parser.addArgument("--password", { help: "the password to enable/disable forging" });
 parser.addArgument("nodes", {
   nargs: "*",
   metavar: "node",
-  help: "nodes to monitor (IP or hostname)"
+  help: "nodes to monitor (IP or hostname)",
 });
 const args = parser.parseArgs();
 
@@ -20,7 +20,9 @@ function randomCharacter(): string {
 }
 
 function randomString(length: number): string {
-  return Array.from({ length: length }).map(() => randomCharacter()).join("");
+  return Array.from({ length: length })
+    .map(() => randomCharacter())
+    .join("");
 }
 
 const ownNode: OwnNode = {
@@ -29,7 +31,9 @@ const ownNode: OwnNode = {
   nonce: randomString(16),
 };
 
-const nodes: ReadonlyArray<MonitoredNode> = (args.nodes as string[]).map(host => new MonitoredNode(host, ownNode));
+const nodes: ReadonlyArray<MonitoredNode> = (args.nodes as string[]).map(
+  host => new MonitoredNode(host, ownNode),
+);
 
 let ip: string | undefined;
 getIp()
@@ -40,7 +44,6 @@ setInterval(() => {
     .then(i => (ip = i))
     .catch(console.warn);
 }, 60 * 1000);
-
 
 const manager = args.password ? new Manager(nodes, args.password) : undefined;
 let lastOutput = 0;

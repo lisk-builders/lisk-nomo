@@ -17,56 +17,16 @@ function compareNodeQuality(a: FullNodeStatus, b: FullNodeStatus): number {
 }
 
 const logTitles = [
-  [
-    "".padStart(22),
-    "".padStart(22),
-    "".padStart(22),
-  ],
-  [
-    "     ",
-    "     ",
-    "ping ",
-  ],
-  [
-    "       ",
-    "       ",
-    "socket ",
-  ],
-  [
-    "          ",
-    "          ",
-    "version   ",
-  ],
-  [
-    "est. ",
-    "clock",
-    "diff ",
-  ],
-  [
-    "WS     ".padEnd(14),
-    "height/".padEnd(14),
-    "chain  ".padEnd(14),
-  ],
-  [
-    "   ".padEnd(6),
-    "   ".padEnd(6),
-    "API".padEnd(6),
-  ],
-  [
-    "WS/API ",
-    "best   ",
-    "height ",
-  ],
-  [
-    "con",
-    "sen",
-    "sus",
-  ],
-  [
-    "       ",
-    "       ",
-    "forging",
-  ],
+  ["".padStart(22), "".padStart(22), "".padStart(22)],
+  ["     ", "     ", "ping "],
+  ["       ", "       ", "socket "],
+  ["          ", "          ", "version   "],
+  ["est. ", "clock", "diff "],
+  ["WS     ".padEnd(14), "height/".padEnd(14), "chain  ".padEnd(14)],
+  ["   ".padEnd(6), "   ".padEnd(6), "API".padEnd(6)],
+  ["WS/API ", "best   ", "height "],
+  ["con", "sen", "sus"],
+  ["       ", "       ", "forging"],
 ];
 
 function printChainHead(chain: Chain): string {
@@ -83,7 +43,7 @@ function printChainHead(chain: Chain): string {
   }
 
   return chainDescription;
-};
+}
 
 function formatSmallTime(ms: number | undefined, undefinedString: string = ""): string {
   if (ms === undefined || Number.isNaN(ms)) {
@@ -132,7 +92,11 @@ function describeApiStatus(status: ApiStatus) {
   }
 }
 
-function statusLine(node: FullNodeStatus, canForge: boolean, countdown: number | undefined): string {
+function statusLine(
+  node: FullNodeStatus,
+  canForge: boolean,
+  countdown: number | undefined,
+): string {
   const online = node.online ? "online " : "offline";
   const api = describeApiStatus(node.apiStatus).padEnd(6);
   const consensus = (typeof node.movingAverageConsensus == "undefined"
@@ -154,13 +118,15 @@ function statusLine(node: FullNodeStatus, canForge: boolean, countdown: number |
     bestHeight,
     consensus,
     forgingStatus(node),
-    countdown
-      ? Math.round(countdown)
-      : (canForge ? "ok" : ""),
+    countdown ? Math.round(countdown) : canForge ? "ok" : "",
   ].join("  ");
 }
 
-export function logStatus(nodes: ReadonlyArray<FullNodeStatus>, observation: ObservationResult | undefined, ip: string | undefined) {
+export function logStatus(
+  nodes: ReadonlyArray<FullNodeStatus>,
+  observation: ObservationResult | undefined,
+  ip: string | undefined,
+) {
   const readyToForge = nodes
     .filter(n => typeof n.forgingConfigured === "string")
     .sort(compareNodeQuality);

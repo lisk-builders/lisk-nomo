@@ -20,23 +20,27 @@ export class ExtendedHttpApi extends HttpApi {
   }
 
   public enableForging(pubkey: string, password: string): Promise<ResponseList<ForgingStatus>> {
-    return request.put(`${this.baseUrl()}/node/status/forging`, {
-      json: {
-        "forging": true,
-        "password": password,
-        "publicKey": pubkey,
-      }
-    }).promise();
+    return request
+      .put(`${this.baseUrl()}/node/status/forging`, {
+        json: {
+          forging: true,
+          password: password,
+          publicKey: pubkey,
+        },
+      })
+      .promise();
   }
 
   public disableForging(pubkey: string, password: string): Promise<ResponseList<ForgingStatus>> {
-    return request.put(`${this.baseUrl()}/node/status/forging`, {
-      json: {
-        "forging": false,
-        "password": password,
-        "publicKey": pubkey,
-      }
-    }).promise();
+    return request
+      .put(`${this.baseUrl()}/node/status/forging`, {
+        json: {
+          forging: false,
+          password: password,
+          publicKey: pubkey,
+        },
+      })
+      .promise();
   }
 }
 

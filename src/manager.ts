@@ -31,9 +31,11 @@ function compareNodeQuality(a: FullNodeStatus, b: FullNodeStatus): number {
 export class Manager {
   private static canForge(node: FullNodeStatus): boolean {
     // Lisk Core minBroadhashConsensus is 51
-    return node.online
-      && typeof node.forgingConfigured == "string"
-      && (node.movingAverageConsensus || 0) >= 51;
+    return (
+      node.online &&
+      typeof node.forgingConfigured == "string" &&
+      (node.movingAverageConsensus || 0) >= 51
+    );
   }
 
   private forgingPassword: string;
@@ -43,31 +45,34 @@ export class Manager {
   constructor(nodes: ReadonlyArray<MonitoredNode>, forgingPassword: string) {
     setInterval(() => {
       if (this.jobExecTime && this.job && Date.now() >= this.jobExecTime.getTime()) {
-
         for (const hostname of this.job.enable) {
-          const execution = nodes.find(n => n.hostname === hostname)!.enableForging(this.forgingPassword);
+          const execution = nodes
+            .find(n => n.hostname === hostname)!
+            .enableForging(this.forgingPassword);
           execution
-              .then(result => {
-                if (!result) {
-                  // why did this happen
-                } else {
-                  // do something with result
-                }
-              })
-              .catch(console.warn);
+            .then(result => {
+              if (!result) {
+                // why did this happen
+              } else {
+                // do something with result
+              }
+            })
+            .catch(console.warn);
         }
 
         for (const hostname of this.job.disable) {
-          const execution = nodes.find(n => n.hostname === hostname)!.disableForging(this.forgingPassword);
+          const execution = nodes
+            .find(n => n.hostname === hostname)!
+            .disableForging(this.forgingPassword);
           execution
-              .then(result => {
-                if (!result) {
-                  // why did this happen
-                } else {
-                  // do something with result
-                }
-              })
-              .catch(console.warn);
+            .then(result => {
+              if (!result) {
+                // why did this happen
+              } else {
+                // do something with result
+              }
+            })
+            .catch(console.warn);
         }
 
         this.jobExecTime = undefined;
@@ -122,7 +127,7 @@ export class Manager {
       job = {
         enable: enableJob,
         disable: disableJob,
-      }
+      };
     }
 
     if (this.job && _.isEqual(this.job, job)) {
@@ -132,7 +137,7 @@ export class Manager {
       if (job) {
         // new job
         this.job = job;
-        this.jobExecTime = new Date(Date.now() + jobExecutionDelay*1000);
+        this.jobExecTime = new Date(Date.now() + jobExecutionDelay * 1000);
       } else {
         // job canceled
         this.job = undefined;
@@ -145,6 +150,6 @@ export class Manager {
       forging: forgingNodes,
       job: job,
       countdown: countdown,
-    }
+    };
   }
 }

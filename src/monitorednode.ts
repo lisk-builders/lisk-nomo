@@ -247,7 +247,7 @@ export class MonitoredNode extends events.EventEmitter implements FullNodeStatus
       }
     }, timePlusMinus(3000));
 
-    setInterval(() => this.cleanup(), timePlusMinus(5*60*1000));
+    setInterval(() => this.cleanup(), timePlusMinus(5 * 60 * 1000));
   }
 
   public async enableForging(password: string): Promise<ResponseList<ForgingStatus> | undefined> {
@@ -292,7 +292,7 @@ export class MonitoredNode extends events.EventEmitter implements FullNodeStatus
 
     this.timeDiffs = this.timeDiffs.slice(-preserveElementsCount);
 
-    if (this._chain.size > 1.5*preserveElementsCount) {
+    if (this._chain.size > 1.5 * preserveElementsCount) {
       const heightList = Array.from(this._chain.keys());
       heightList.sort();
       while (this._chain.size > preserveElementsCount) {
