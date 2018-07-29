@@ -66,17 +66,17 @@ function nameWidth(name: string, length: number) {
 function forgingStatus(node: FullNodeStatus): string {
   let out: string;
   if (node.isForging) {
-    out = `forging (${node.isForging.substring(0, 6)})`;
+    out = "forging";
   } else {
     if (typeof node.forgingConfigured === "undefined") {
-      out = "status unknown";
+      out = "unknown";
     } else if (node.forgingConfigured === false) {
       out = "not configured";
     } else {
-      out = `ready (${node.forgingConfigured.substring(0, 6)})`;
+      out = "configured";
     }
   }
-  return out.padEnd(16);
+  return out.padEnd(14);
 }
 
 function describeApiStatus(status: ApiStatus) {
@@ -94,8 +94,8 @@ function describeApiStatus(status: ApiStatus) {
 
 function statusLine(
   node: FullNodeStatus,
-  canForge: boolean,
-  countdown: number | undefined,
+  managerCanForge: boolean,
+  managerCountdown: number | undefined,
 ): string {
   const online = node.online ? "online " : "offline";
   const api = describeApiStatus(node.apiStatus).padEnd(6);
@@ -118,7 +118,7 @@ function statusLine(
     bestHeight,
     consensus,
     forgingStatus(node),
-    countdown ? Math.round(countdown) : canForge ? "ok" : "",
+    managerCountdown ? Math.round(managerCountdown) : managerCanForge ? "ready" : "",
   ].join("  ");
 }
 
@@ -140,7 +140,7 @@ export function logStatus(
   for (let row = 0; row < 3; ++row) {
     console.log(logTitles.map(cols => cols[row]).join("  "));
   }
-  console.log("".padEnd(115, "-"));
+  console.log("".padEnd(118, "-"));
 
   for (const node of readyToForge) {
     let canForgeObservation = false;
