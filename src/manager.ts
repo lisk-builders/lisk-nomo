@@ -1,5 +1,6 @@
-import { FullNodeStatus, MonitoredNode } from "./monitorednode";
 import * as _ from "underscore";
+
+import { FullNodeStatus, MonitoredNode } from "./monitorednode";
 
 const jobExecutionDelay = 15; // seconds
 

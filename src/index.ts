@@ -1,9 +1,9 @@
-import { MonitoredNode, OwnNode, ApiStatus, Chain, MonitoredNodeEvents } from "./monitorednode";
-import { getIp } from "./stun";
+import { ArgumentParser } from "argparse";
+
 import { logStatus } from "./display";
 import { Manager } from "./manager";
-
-import { ArgumentParser } from "argparse";
+import { MonitoredNode, MonitoredNodeEvents, OwnNode } from "./monitorednode";
+import { getIp } from "./stun";
 
 const parser = new ArgumentParser({ description: "Lisk node monitor" });
 parser.addArgument("--password", { help: "the password to enable/disable forging" });

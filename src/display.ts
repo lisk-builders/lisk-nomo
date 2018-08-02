@@ -1,5 +1,5 @@
-import { FullNodeStatus, ApiStatus, Chain } from "./monitorednode";
 import { ObservationResult } from "./manager";
+import { ApiStatus, Chain, FullNodeStatus } from "./monitorednode";
 
 function compareNodeQuality(a: FullNodeStatus, b: FullNodeStatus): number {
   const aKiloHeight = Math.floor((a.bestHeight || 0) / 1000);
