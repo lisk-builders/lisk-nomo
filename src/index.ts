@@ -32,7 +32,7 @@ const ownNode: OwnNode = {
 };
 
 const nodes: ReadonlyArray<MonitoredNode> = (args.nodes as string[]).map(
-  host => new MonitoredNode(host, ownNode),
+  host => new MonitoredNode(ownNode, host, 7000, 7001),
 );
 
 let ip: string | undefined;

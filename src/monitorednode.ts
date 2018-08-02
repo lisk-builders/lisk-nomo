@@ -140,17 +140,22 @@ export class MonitoredNode extends events.EventEmitter implements FullNodeStatus
   private _version: string | undefined;
   private timeDiffs = new Array<number>();
 
-  constructor(public readonly hostname: string, ownNode: OwnNode) {
+  constructor(
+    ownNode: OwnNode,
+    public readonly hostname: string,
+    public readonly httpPort: number,
+    public readonly wsPort: number,
+  ) {
     super();
 
-    this.httpApi = new ExtendedHttpApi(hostname, 7000);
-    this.httpsApi = new ExtendedHttpApi(hostname, 7000, true);
+    this.httpApi = new ExtendedHttpApi(hostname, httpPort);
+    this.httpsApi = new ExtendedHttpApi(hostname, httpPort, true);
 
     this.connectedPeer = new LiskPeer(
       {
         ip: hostname,
-        httpPort: 7000,
-        wsPort: 7001,
+        httpPort: httpPort,
+        wsPort: wsPort,
         nonce: "",
         nethash: "da3ed6a45429278bac2666961289ca17ad86595d33b31037615d4b8e8f158bba",
         ownHttpPort: ownNode.httpPort,
@@ -182,7 +187,7 @@ export class MonitoredNode extends events.EventEmitter implements FullNodeStatus
 
     setInterval(async () => {
       try {
-        const ping = await new Ping(this.hostname, 7001).run();
+        const ping = await new Ping(this.hostname, this.wsPort).run();
         this._wsPing = Number.isNaN(ping.avg) ? undefined : ping.avg;
       } catch {
         this._wsPing = undefined;
