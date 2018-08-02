@@ -1,7 +1,8 @@
 {
-  "name": "monitor",
-  "version": "0.0.1",
+  "name": "lisk-nomo",
+  "version": "1.0.0",
   "main": "index.js",
+  "author": "Simon Warta (prolina delegate)",
   "license": "MIT",
   "scripts": {
     "format": "prettier --write 'src/**/*.ts'",
