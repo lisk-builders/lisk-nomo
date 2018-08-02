@@ -35,13 +35,13 @@ const nodes: ReadonlyArray<MonitoredNode> = (args.nodes as string[]).map(
   host => new MonitoredNode(ownNode, host, 7000, 7001),
 );
 
-let ip: string | undefined;
+let monitoringIp: string | undefined;
 getIp()
-  .then(i => (ip = i))
+  .then(i => (monitoringIp = i))
   .catch(console.warn);
 setInterval(() => {
   getIp()
-    .then(i => (ip = i))
+    .then(i => (monitoringIp = i))
     .catch(console.warn);
 }, 60 * 1000);
 
@@ -52,7 +52,7 @@ for (const node of nodes) {
     let observation = manager ? manager.observe(nodes) : undefined;
 
     if (Date.now() - lastOutput > 500) {
-      logStatus(nodes, observation, ip);
+      logStatus(nodes, observation, monitoringIp);
       lastOutput = Date.now();
     }
   });
