@@ -2,7 +2,7 @@
 
 Node monitor for nomo downtime.
 
-Lisk Nomo is tailored for the new Lisk Core 1.x release and untilized the power
+Lisk Nomo is tailored for the new Lisk Core 1.x release and utilizes the power
 of WebSockets.
 
 ## Prerequisites
@@ -10,9 +10,9 @@ of WebSockets.
 I prefer yarn but npm should work too. All examples will use yarn.
 
 ```
-git clone --recursive https://github.com/prolina-foundation/lisk-nomo
-cd lisk-nomo
-yarn install
+$ git clone --recursive https://github.com/prolina-foundation/lisk-nomo
+$ cd lisk-nomo
+$ yarn install
 ```
 
 ## First run
@@ -20,7 +20,7 @@ yarn install
 Monitor a bunch of nodes:
 
 ```
-yarn start testnet.lisk.io node01.testnet.lisk node02.testnet.lisk node03.testnet.lisk
+$ yarn start testnet.lisk.io node01.testnet.lisk node02.testnet.lisk node03.testnet.lisk
 ```
 
 and see the magic happen
@@ -43,7 +43,7 @@ node03.testnet.lisk      16ms  online   1.0.0-rc.1   13ms  5877782/a1b224  close
 | ping               | A TCP/IP ping to the node's WebSocket port    |
 | socket             | Online/offline status                         |
 | version            | The node's version of Lisk core               |
-| est. clock diff    | An rough estimation of the system clock difference beween monitor and node. Typical values are -10ms to 150 ms. A diff < -100ms or > 500ms means that the node's clock is probably not synced |
+| est. clock diff    | An rough estimation of the system clock difference beween monitor and node. Typical values are -10ms to 150ms. A diff less than -100ms or greater than 500ms means that the node's clock is probably not synced. |
 | WS height/chain    | The height we get from the Websocket connection and a prefix of the broadhash |
 | API                | API access: HTTPs, HTTP or closed. Add the monitoring IP to api.access.whitelist in the node's config.json to get data |
 | WS/API best height | The best height we know of the node           |
@@ -72,7 +72,7 @@ As you can see, all my personal nodes are configured for forging but non is forg
 When you start with the `--password` parameter, the monitor will auto-select a node for forging and activate it.
 
 ```
-yarn start --password 87654321 testnet.lisk.io node01.testnet.lisk node02.testnet.lisk node03.testnet.lisk
+$ yarn start --password 87654321 testnet.lisk.io node01.testnet.lisk node02.testnet.lisk node03.testnet.lisk
 ```
 
 After some seconds to collect data and get warm, the manager decided to activate
