@@ -1,5 +1,6 @@
 import { ArgumentParser } from "argparse";
 import * as winston from "winston";
+import Koa = require("koa");
 
 import { displayState, initCommandLine } from "./display";
 import { Manager } from "./manager";
@@ -8,6 +9,7 @@ import { MonitoringState } from "./monitoringstate";
 import { getIp } from "./stun";
 
 const parser = new ArgumentParser({ description: "Lisk node monitor" });
+parser.addArgument("--apiPort", { help: "set to enable nomo REST API" });
 parser.addArgument("--password", { help: "the password to enable/disable forging" });
 parser.addArgument("nodes", {
   nargs: "*",
@@ -55,12 +57,13 @@ setInterval(() => {
 const manager = args.password ? new Manager(nodes, args.password) : undefined;
 
 function getCurrentState(): MonitoringState {
-  let observation = manager ? manager.observe(nodes) : undefined;
+  const nodeStati = nodes.map(n => n.status);
+  const observation = manager ? manager.observe(nodeStati) : undefined;
   return {
     time: new Date(Date.now()).toISOString(),
     ip: monitoringIp,
     observation: observation,
-    nodes: nodes,
+    nodes: nodeStati,
   };
 }
 
@@ -79,3 +82,20 @@ const logFile = new winston.transports.File({ filename: "nomo.log" });
 winston.add(logFile);
 
 initCommandLine();
+
+if (args.apiPort) {
+  const api = new Koa();
+
+  api.use(async context => {
+    switch (context.path) {
+      case "/state":
+        const state = getCurrentState();
+        context.response.body = state;
+        break;
+      default:
+      // koa sends 404 by default
+    }
+  });
+
+  api.listen(args.apiPort);
+}

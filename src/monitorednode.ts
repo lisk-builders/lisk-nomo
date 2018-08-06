@@ -61,29 +61,21 @@ export const enum MonitoredNodeEvents {
   Updated = "updated",
 }
 
-export class MonitoredNode extends events.EventEmitter implements FullNodeStatus {
-  get chain(): Chain {
-    return this._chain;
-  }
-
-  get version(): string | undefined {
-    return this._version;
-  }
-
-  get online(): boolean {
-    return this.connectedPeer.state == PeerState.ONLINE;
-  }
-
-  get apiStatus(): ApiStatus {
-    return this._apiStatus;
-  }
-
-  get forgingConfigured(): string | false | undefined {
-    return this._forgingConfigured;
-  }
-
-  get isForging(): string | false | undefined {
-    return this._isForging;
+export class MonitoredNode extends events.EventEmitter {
+  get status(): FullNodeStatus {
+    return {
+      online: this.connectedPeer.state == PeerState.ONLINE,
+      version: this._version,
+      wsPing: this._wsPing,
+      chain: this._chain,
+      clockDiffEstimation: this.clockDiffEstimation,
+      apiStatus: this._apiStatus,
+      bestHeight: this.bestHeight,
+      movingAverageConsensus: this.movingAverageConsensus,
+      forgingConfigured: this._forgingConfigured, // string is the pubkey
+      isForging: this._isForging, // string is the pubkey
+      hostname: this.hostname,
+    };
   }
 
   get movingAverageConsensus(): number | undefined {
@@ -112,15 +104,11 @@ export class MonitoredNode extends events.EventEmitter implements FullNodeStatus
     return Math.max(this._heightFromApi || 0, this._heightFromWs || 0);
   }
 
-  get wsPing(): number | undefined {
-    return this._wsPing;
-  }
-
   get clockDiffEstimation(): number | undefined {
     const timeDiffMs = this.movingMinTimeDiffMs;
     if (timeDiffMs === undefined) return undefined;
 
-    const ping = this.wsPing;
+    const ping = this._wsPing;
     if (ping === undefined) return undefined;
 
     return timeDiffMs - ping;
@@ -257,8 +245,8 @@ export class MonitoredNode extends events.EventEmitter implements FullNodeStatus
   }
 
   public async enableForging(password: string): Promise<ResponseList<ForgingStatus> | undefined> {
-    if (typeof this.forgingConfigured === "string") {
-      const pubkey = this.forgingConfigured;
+    if (typeof this._forgingConfigured === "string") {
+      const pubkey = this._forgingConfigured;
       const response = await this.httpApi.updateForging(true, pubkey, password);
       this.processNewForgingStatus(response.data);
       return response;
@@ -268,8 +256,8 @@ export class MonitoredNode extends events.EventEmitter implements FullNodeStatus
   }
 
   public async disableForging(password: string): Promise<ResponseList<ForgingStatus> | undefined> {
-    if (typeof this.isForging === "string") {
-      const pubkey = this.isForging;
+    if (typeof this._isForging === "string") {
+      const pubkey = this._isForging;
       const response = await this.httpApi.updateForging(false, pubkey, password);
       this.processNewForgingStatus(response.data);
       return response;
