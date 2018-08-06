@@ -127,20 +127,22 @@ export function logStatus(
   observation: ObservationResult | undefined,
   ip: string | undefined,
 ) {
+  const out = new Array<string>();
+
   const readyToForge = nodes
     .filter(n => typeof n.forgingConfigured === "string")
     .sort(compareNodeQuality);
   const other = nodes.filter(n => typeof n.forgingConfigured !== "string").sort(compareNodeQuality);
 
-  console.log("");
-  console.log("========================");
-  console.log(`Status time ${new Date(Date.now()).toISOString()} | Monitoring IP: ${ip}`);
-  console.log("");
+  out.push("");
+  out.push("========================");
+  out.push(`Status time ${new Date(Date.now()).toISOString()} | Monitoring IP: ${ip}`);
+  out.push("");
 
   for (let row = 0; row < 3; ++row) {
-    console.log(logTitles.map(cols => cols[row]).join("  "));
+    out.push(logTitles.map(cols => cols[row]).join("  "));
   }
-  console.log("".padEnd(118, "-"));
+  out.push("".padEnd(118, "-"));
 
   for (const node of readyToForge) {
     let canForgeObservation = false;
@@ -154,10 +156,10 @@ export function logStatus(
           : undefined;
       }
     }
-    console.log(statusLine(node, canForgeObservation, countdown));
+    out.push(statusLine(node, canForgeObservation, countdown));
   }
   if (readyToForge.length > 0 && other.length > 0) {
-    console.log("");
+    out.push("");
   }
   for (const node of other) {
     let canForgeObservation = false;
@@ -171,6 +173,8 @@ export function logStatus(
           : undefined;
       }
     }
-    console.log(statusLine(node, canForgeObservation, countdown));
+    out.push(statusLine(node, canForgeObservation, countdown));
   }
+
+  console.log(out.join("\n"));
 }
