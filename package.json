@@ -7,7 +7,7 @@
   "scripts": {
     "format": "prettier --write 'src/**/*.ts'",
     "build": "tsc",
-    "start": "yarn build && node build/index.js"
+    "start": "tsc && node build/index.js"
   },
   "devDependencies": {
     "@types/argparse": "^1.0.34",
