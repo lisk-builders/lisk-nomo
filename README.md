@@ -7,6 +7,8 @@ of WebSockets.
 
 ## Prerequisites
 
+Requires Node.js 8 or above.
+
 I prefer yarn but npm should work too. All examples will use yarn.
 
 ```
