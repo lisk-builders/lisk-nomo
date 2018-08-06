@@ -16,13 +16,20 @@ export const enum ApiStatus {
   Unknown = 0,
 }
 
+export interface ChainHead {
+  readonly height: number;
+  readonly broadhash: string;
+}
+
 export interface FullNodeStatus {
   readonly online: boolean;
   readonly version: string | undefined;
   readonly wsPing: number | undefined;
-  readonly chain: Chain;
+  readonly chainHead: ChainHead | undefined;
   readonly clockDiffEstimation: number | undefined;
   readonly apiStatus: ApiStatus;
+  readonly apiHeight: number | undefined;
+  readonly wsHeight: number | undefined;
   readonly bestHeight: number | undefined;
   readonly movingAverageConsensus: number | undefined;
   readonly forgingConfigured: string | false | undefined; // string is the pubkey
@@ -67,9 +74,11 @@ export class MonitoredNode extends events.EventEmitter {
       online: this.connectedPeer.state == PeerState.ONLINE,
       version: this._version,
       wsPing: this._wsPing,
-      chain: this._chain,
+      chainHead: this.chainHead,
       clockDiffEstimation: this.clockDiffEstimation,
       apiStatus: this._apiStatus,
+      wsHeight: this.wsHeight,
+      apiHeight: this._apiHeight,
       bestHeight: this.bestHeight,
       movingAverageConsensus: this.movingAverageConsensus,
       forgingConfigured: this._forgingConfigured, // string is the pubkey
@@ -93,15 +102,35 @@ export class MonitoredNode extends events.EventEmitter {
     else return Math.min(...this.timeDiffs.slice(-500));
   }
 
-  get heightFromApi(): number | undefined {
-    return this._heightFromApi;
+  get wsHeight(): number | undefined {
+    const keys = Array.from(this._chain.keys());
+    if (keys.length === 0) {
+      return undefined;
+    } else {
+      return Math.max(...keys);
+    }
+  }
+
+  get chainHead(): ChainHead | undefined {
+    const keys = Array.from(this._chain.keys());
+    keys.sort();
+
+    if (keys.length == 0) {
+      return undefined;
+    } else {
+      const maxKey = keys[keys.length - 1];
+      return {
+        height: maxKey,
+        broadhash: this._chain.get(maxKey)!,
+      };
+    }
   }
 
   get bestHeight(): number | undefined {
-    if (this._heightFromApi === undefined && this._heightFromWs === undefined) {
+    if (this._apiHeight === undefined && this._heightFromWs === undefined) {
       return undefined;
     }
-    return Math.max(this._heightFromApi || 0, this._heightFromWs || 0);
+    return Math.max(this._apiHeight || 0, this._heightFromWs || 0);
   }
 
   get clockDiffEstimation(): number | undefined {
@@ -121,7 +150,7 @@ export class MonitoredNode extends events.EventEmitter {
   private _wsPing: number | undefined;
   private _apiStatus: ApiStatus = ApiStatus.Unknown;
   private _consensus = new Array<number>();
-  private _heightFromApi: number | undefined;
+  private _apiHeight: number | undefined;
   private _heightFromWs: number | undefined;
   private _forgingConfigured: string | false | undefined;
   private _isForging: string | false | undefined;
@@ -208,8 +237,8 @@ export class MonitoredNode extends events.EventEmitter {
         height = undefined;
       }
 
-      if (this._heightFromApi != height) {
-        this._heightFromApi = height;
+      if (this._apiHeight != height) {
+        this._apiHeight = height;
         this.emit(MonitoredNodeEvents.Updated);
       }
 

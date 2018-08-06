@@ -1,5 +1,5 @@
 import { ObservationResult } from "./manager";
-import { ApiStatus, Chain, FullNodeStatus } from "./monitorednode";
+import { ApiStatus, ChainHead, FullNodeStatus } from "./monitorednode";
 import { MonitoringState } from "./monitoringstate";
 
 function compareNodeQuality(a: FullNodeStatus, b: FullNodeStatus): number {
@@ -30,20 +30,12 @@ const logTitles = [
   ["       ", "       ", "forging"],
 ];
 
-function printChainHead(chain: Chain): string {
-  const keys = Array.from(chain.keys());
-  keys.sort();
-
-  let chainDescription: string;
-  if (keys.length == 0) {
-    chainDescription = "unknown";
+function printChainHead(chain: ChainHead | undefined): string {
+  if (chain === undefined) {
+    return "unknown";
   } else {
-    const max = keys[keys.length - 1];
-    const head = chain.get(max);
-    chainDescription = `${max}/${head}`;
+    return `${chain.height}/${chain.broadhash}`;
   }
-
-  return chainDescription;
 }
 
 function formatSmallTime(ms: number | undefined, undefinedString: string = ""): string {
@@ -114,7 +106,7 @@ function statusLine(
     online,
     (node.version || "").padStart(10),
     formatSmallTime(node.clockDiffEstimation),
-    printChainHead(node.chain).padEnd(14),
+    printChainHead(node.chainHead).padEnd(14),
     api,
     bestHeight,
     consensus,
