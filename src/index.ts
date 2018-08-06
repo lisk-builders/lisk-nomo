@@ -31,6 +31,11 @@ const ownNode: OwnNode = {
   nonce: randomString(16),
 };
 
+if ((args.nodes as string[]).length === 0) {
+  console.error("No nodes configured for monitoring. Run with --help.");
+  process.exit(1);
+}
+
 const nodes: ReadonlyArray<MonitoredNode> = (args.nodes as string[]).map(
   host => new MonitoredNode(ownNode, host, 7000, 7001),
 );
