@@ -10,8 +10,8 @@ export interface ManagerJob {
 }
 
 export interface ObservationResult {
-  readonly canForge: string[];
-  readonly forging: FullNodeStatus[];
+  readonly canForge: string[]; // hostnames
+  readonly forging: string[]; // hostnames
   readonly job: ManagerJob | undefined;
   readonly countdown: number | undefined;
 }
@@ -167,7 +167,7 @@ export class Manager {
 
     return {
       canForge: canForge,
-      forging: forgingNodes,
+      forging: forgingNodes.map(n => n.hostname),
       job: job,
       countdown: countdown,
     };
