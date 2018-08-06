@@ -1,21 +1,6 @@
-import { ObservationResult } from "./manager";
+import { compareNodeQuality } from "./manager";
 import { ApiStatus, ChainHead, FullNodeStatus } from "./monitorednode";
 import { MonitoringState } from "./monitoringstate";
-
-function compareNodeQuality(a: FullNodeStatus, b: FullNodeStatus): number {
-  const aKiloHeight = Math.floor((a.bestHeight || 0) / 1000);
-  const bKiloHeight = Math.floor((b.bestHeight || 0) / 1000);
-
-  if (a.online && !b.online) return -1;
-  if (!a.online && b.online) return 1;
-  if (aKiloHeight > bKiloHeight) return -1;
-  if (aKiloHeight < bKiloHeight) return 1;
-  if (a.apiStatus > b.apiStatus) return -1;
-  if (a.apiStatus < b.apiStatus) return 1;
-  if (a.forgingConfigured !== undefined && b.forgingConfigured === undefined) return -1;
-  if (a.forgingConfigured === undefined && b.forgingConfigured !== undefined) return 1;
-  return a.hostname.localeCompare(b.hostname);
-}
 
 const logTitles = [
   ["".padStart(22), "".padStart(22), "".padStart(22)],
@@ -72,10 +57,10 @@ function forgingStatus(node: FullNodeStatus): string {
   return out.padEnd(14);
 }
 
-function describeApiStatus(status: ApiStatus) {
+function describeApiStatus(status: ApiStatus | undefined) {
+  if (status === undefined) return "?";
+
   switch (status) {
-    case ApiStatus.Unknown:
-      return "?";
     case ApiStatus.Closed:
       return "closed";
     case ApiStatus.HttpsOpen:

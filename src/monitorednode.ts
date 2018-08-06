@@ -9,11 +9,10 @@ import { Ping } from "./ping";
 export type Chain = Map<number, string>; // height -> broadhash
 
 export const enum ApiStatus {
-  // value represents a quality value for comparison (higher is better)
-  HttpsOpen = 300,
-  HttpOpen = 200,
-  Closed = 100,
-  Unknown = 0,
+  // raw value are for the API
+  HttpsOpen = "https",
+  HttpOpen = "http",
+  Closed = "closed",
 }
 
 export interface ChainHead {
@@ -27,7 +26,7 @@ export interface FullNodeStatus {
   readonly wsPing: number | undefined;
   readonly chainHead: ChainHead | undefined;
   readonly clockDiffEstimation: number | undefined;
-  readonly apiStatus: ApiStatus;
+  readonly apiStatus: ApiStatus | undefined;
   readonly apiHeight: number | undefined;
   readonly wsHeight: number | undefined;
   readonly bestHeight: number | undefined;
@@ -145,7 +144,7 @@ export class MonitoredNode extends events.EventEmitter {
   private readonly connectedPeer: LiskPeer;
   private readonly _chain: Chain = new Map<number, string>(); // height -> broadhash
   private _wsPing: number | undefined;
-  private _apiStatus: ApiStatus = ApiStatus.Unknown;
+  private _apiStatus: ApiStatus | undefined;
   private _consensus = new Array<number>();
   private _apiHeight: number | undefined;
   private _heightFromWs: number | undefined;

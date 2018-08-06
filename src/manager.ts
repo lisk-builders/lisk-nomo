@@ -1,6 +1,6 @@
 import * as _ from "underscore";
 
-import { FullNodeStatus, MonitoredNode } from "./monitorednode";
+import { FullNodeStatus, MonitoredNode, ApiStatus } from "./monitorednode";
 
 const jobExecutionDelay = 15; // seconds
 
@@ -16,7 +16,19 @@ export interface ObservationResult {
   readonly countdown: number | undefined;
 }
 
-function compareNodeQuality(a: FullNodeStatus, b: FullNodeStatus): number {
+function apiStatusValue(status: ApiStatus | undefined): number {
+  if (status === undefined) return 0;
+  switch (status) {
+    case ApiStatus.Closed:
+      return 100;
+    case ApiStatus.HttpOpen:
+      return 200;
+    case ApiStatus.HttpsOpen:
+      return 300;
+  }
+}
+
+export function compareNodeQuality(a: FullNodeStatus, b: FullNodeStatus): number {
   const aKiloHeight = Math.floor((a.bestHeight || 0) / 1000);
   const bKiloHeight = Math.floor((b.bestHeight || 0) / 1000);
 
@@ -24,6 +36,8 @@ function compareNodeQuality(a: FullNodeStatus, b: FullNodeStatus): number {
   if (!a.online && b.online) return 1;
   if (aKiloHeight > bKiloHeight) return -1;
   if (aKiloHeight < bKiloHeight) return 1;
+  if (apiStatusValue(a.apiStatus) > apiStatusValue(b.apiStatus)) return -1;
+  if (apiStatusValue(a.apiStatus) < apiStatusValue(b.apiStatus)) return 1;
   if ((a.movingAverageConsensus || 0) > (b.movingAverageConsensus || 0) + 20) return -1;
   if ((a.movingAverageConsensus || 0) < (b.movingAverageConsensus || 0) - 20) return 1;
   return a.hostname.localeCompare(b.hostname);
