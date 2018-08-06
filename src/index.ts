@@ -1,9 +1,10 @@
 import { ArgumentParser } from "argparse";
 import * as winston from "winston";
 
-import { logStatus, initCommandLine } from "./display";
+import { displayState, initCommandLine } from "./display";
 import { Manager } from "./manager";
 import { MonitoredNode, MonitoredNodeEvents, OwnNode } from "./monitorednode";
+import { MonitoringState } from "./monitoringstate";
 import { getIp } from "./stun";
 
 const parser = new ArgumentParser({ description: "Lisk node monitor" });
@@ -52,13 +53,23 @@ setInterval(() => {
 }, 60 * 1000);
 
 const manager = args.password ? new Manager(nodes, args.password) : undefined;
+
+function getCurrentState(): MonitoringState {
+  let observation = manager ? manager.observe(nodes) : undefined;
+  return {
+    time: new Date(Date.now()).toISOString(),
+    ip: monitoringIp,
+    observation: observation,
+    nodes: nodes,
+  };
+}
+
 let lastOutput = 0;
 for (const node of nodes) {
   node.on(MonitoredNodeEvents.Updated, () => {
-    let observation = manager ? manager.observe(nodes) : undefined;
-
     if (Date.now() - lastOutput > 500) {
-      logStatus(nodes, observation, monitoringIp);
+      let state = getCurrentState();
+      displayState(state);
       lastOutput = Date.now();
     }
   });

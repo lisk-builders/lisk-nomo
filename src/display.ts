@@ -1,5 +1,6 @@
 import { ObservationResult } from "./manager";
 import { ApiStatus, Chain, FullNodeStatus } from "./monitorednode";
+import { MonitoringState } from "./monitoringstate";
 
 function compareNodeQuality(a: FullNodeStatus, b: FullNodeStatus): number {
   const aKiloHeight = Math.floor((a.bestHeight || 0) / 1000);
@@ -142,19 +143,17 @@ function writeScreen(lines: string[]) {
   console.log("\u001b[1;1H" + out.join("\n"));
 }
 
-export function logStatus(
-  nodes: ReadonlyArray<FullNodeStatus>,
-  observation: ObservationResult | undefined,
-  ip: string | undefined,
-) {
+export function displayState(state: MonitoringState) {
   const out = new Array<string>();
 
-  const readyToForge = nodes
+  const readyToForge = state.nodes
     .filter(n => typeof n.forgingConfigured === "string")
     .sort(compareNodeQuality);
-  const other = nodes.filter(n => typeof n.forgingConfigured !== "string").sort(compareNodeQuality);
+  const other = state.nodes
+    .filter(n => typeof n.forgingConfigured !== "string")
+    .sort(compareNodeQuality);
 
-  out.push(`Status time ${new Date(Date.now()).toISOString()} | Monitoring IP: ${ip}`);
+  out.push(`Status time ${state.time} | Monitoring IP: ${state.ip}`);
   out.push("");
 
   for (let row = 0; row < 3; ++row) {
@@ -165,12 +164,12 @@ export function logStatus(
   for (const node of readyToForge) {
     let canForgeObservation = false;
     let countdown: number | undefined;
-    if (observation) {
-      canForgeObservation = observation.canForge.get(node.hostname) || false;
-      if (observation.job) {
-        const job = observation.job;
+    if (state.observation) {
+      canForgeObservation = state.observation.canForge.get(node.hostname) || false;
+      if (state.observation.job) {
+        const job = state.observation.job;
         countdown = [...job.enable, ...job.disable].includes(node.hostname)
-          ? observation.countdown
+          ? state.observation.countdown
           : undefined;
       }
     }
@@ -182,12 +181,12 @@ export function logStatus(
   for (const node of other) {
     let canForgeObservation = false;
     let countdown: number | undefined;
-    if (observation) {
-      canForgeObservation = observation.canForge.get(node.hostname) || false;
-      if (observation.job) {
-        const job = observation.job;
+    if (state.observation) {
+      canForgeObservation = state.observation.canForge.get(node.hostname) || false;
+      if (state.observation.job) {
+        const job = state.observation.job;
         countdown = [...job.enable, ...job.disable].includes(node.hostname)
-          ? observation.countdown
+          ? state.observation.countdown
           : undefined;
       }
     }
