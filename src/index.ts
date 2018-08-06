@@ -1,4 +1,5 @@
 import { ArgumentParser } from "argparse";
+import * as winston from "winston";
 
 import { logStatus } from "./display";
 import { Manager } from "./manager";
@@ -62,3 +63,6 @@ for (const node of nodes) {
     }
   });
 }
+
+const logFile = new winston.transports.File({ filename: "nomo.log" });
+winston.add(logFile);
