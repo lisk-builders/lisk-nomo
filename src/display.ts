@@ -122,6 +122,26 @@ function statusLine(
   ].join("  ");
 }
 
+function prepareLine(line: string, targetLength: number) {
+  return line.substring(0, targetLength).padEnd(targetLength);
+}
+
+function writeScreen(lines: string[]) {
+  const columns =
+    process.stdout.columns !== undefined
+      ? process.stdout.columns
+      : Math.max(...lines.map(line => line.length));
+
+  let out = new Array(...lines.map(line => prepareLine(line, columns)));
+
+  if (process.stdout.rows != undefined) {
+    for (let i = 0; i < process.stdout.rows - lines.length - 1; ++i) {
+      out.push(prepareLine("", columns));
+    }
+  }
+  console.log("\u001b[1;1H" + out.join("\n"));
+}
+
 export function logStatus(
   nodes: ReadonlyArray<FullNodeStatus>,
   observation: ObservationResult | undefined,
@@ -134,8 +154,6 @@ export function logStatus(
     .sort(compareNodeQuality);
   const other = nodes.filter(n => typeof n.forgingConfigured !== "string").sort(compareNodeQuality);
 
-  out.push("");
-  out.push("========================");
   out.push(`Status time ${new Date(Date.now()).toISOString()} | Monitoring IP: ${ip}`);
   out.push("");
 
@@ -176,5 +194,11 @@ export function logStatus(
     out.push(statusLine(node, canForgeObservation, countdown));
   }
 
-  console.log(out.join("\n"));
+  writeScreen(out);
+}
+
+export function initCommandLine() {
+  console.log("".padEnd(50, "\n"));
+
+  writeScreen(["Collecting data ..."]);
 }

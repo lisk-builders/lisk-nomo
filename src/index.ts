@@ -1,7 +1,7 @@
 import { ArgumentParser } from "argparse";
 import * as winston from "winston";
 
-import { logStatus } from "./display";
+import { logStatus, initCommandLine } from "./display";
 import { Manager } from "./manager";
 import { MonitoredNode, MonitoredNodeEvents, OwnNode } from "./monitorednode";
 import { getIp } from "./stun";
@@ -66,3 +66,5 @@ for (const node of nodes) {
 
 const logFile = new winston.transports.File({ filename: "nomo.log" });
 winston.add(logFile);
+
+initCommandLine();
