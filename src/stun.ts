@@ -2,7 +2,7 @@ import stun = require("stun");
 
 const { STUN_BINDING_REQUEST, STUN_ATTR_XOR_MAPPED_ADDRESS } = stun.constants;
 
-function getIpFromStunServer(stunHost: string, stunPort): Promise<string> {
+function getIpFromStunServer(stunHost: string, stunPort: number): Promise<string> {
   const server = stun.createServer();
   const request = stun.createMessage(STUN_BINDING_REQUEST);
 
