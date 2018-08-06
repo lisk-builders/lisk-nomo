@@ -7,7 +7,7 @@ function getIpFromStunServer(stunHost: string, stunPort: number): Promise<string
   const request = stun.createMessage(STUN_BINDING_REQUEST);
 
   return new Promise<string>((resolve, reject) => {
-    server.once("bindingResponse", stunMsg => {
+    server.once("bindingResponse", (stunMsg: any) => {
       const response = stunMsg.getAttribute(STUN_ATTR_XOR_MAPPED_ADDRESS);
       if (!response) {
         reject(`Response missing from ${stunHost}`);

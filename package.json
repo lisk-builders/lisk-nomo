@@ -19,6 +19,8 @@
   "dependencies": {
     "@types/koa": "^2.0.46",
     "@types/node": "^10.5.2",
+    "@types/tcp-ping": "^0.1.0",
+    "@types/underscore": "^1.8.8",
     "argparse": "^1.0.10",
     "events": "^3.0.0",
     "koa": "^2.5.2",

@@ -6,9 +6,15 @@
     ],
     "target": "es2016",
     "strictNullChecks": true,
+    "noImplicitAny": true,
     "baseUrl": ".",
     "outDir": "build",
-    "rootDir": "src"
+    "rootDir": "src",
+    "typeRoots": [
+      "./node_modules/@types",
+      "./custom_types",
+      "./src/external/argus/custom_types",
+    ],
   },
   "include": [
       "src/index.ts"

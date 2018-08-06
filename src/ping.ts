@@ -5,7 +5,7 @@ export class Ping {
 
   public run(): Promise<PingResponse> {
     return new Promise((resolve, reject) => {
-      tcpPing.ping({ address: this.host, port: this.port }, (err, data) => {
+      tcpPing.ping({ address: this.host, port: this.port }, (err: any, data: any) => {
         if (err) {
           reject(err);
         } else {
