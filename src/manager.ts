@@ -10,7 +10,7 @@ export interface ManagerJob {
 }
 
 export interface ObservationResult {
-  readonly canForge: Map<string, boolean>;
+  readonly canForge: string[];
   readonly forging: FullNodeStatus[];
   readonly job: ManagerJob | undefined;
   readonly countdown: number | undefined;
@@ -99,17 +99,22 @@ export class Manager {
   }
 
   public observe(nodes: ReadonlyArray<FullNodeStatus>): ObservationResult {
-    const canForge = new Map<string, boolean>();
+    const canForge = new Array<string>();
     const forgingNodes = new Array<FullNodeStatus>();
     const forgingConfiguredNodes = new Array<FullNodeStatus>();
+
     const disableJob = new Array<string>();
     const enableJob = new Array<string>();
 
     for (const node of nodes) {
-      canForge.set(node.hostname, Manager.canForge(node));
+      if (Manager.canForge(node)) {
+        canForge.push(node.hostname);
+      }
+
       if (node.isForging) {
         forgingNodes.push(node);
       }
+
       if (typeof node.forgingConfigured === "string") {
         forgingConfiguredNodes.push(node);
       }

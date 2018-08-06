@@ -142,7 +142,7 @@ export function displayState(state: MonitoringState) {
     let canForgeObservation = false;
     let countdown: number | undefined;
     if (state.observation) {
-      canForgeObservation = state.observation.canForge.get(node.hostname) || false;
+      canForgeObservation = state.observation.canForge.includes(node.hostname);
       if (state.observation.job) {
         const job = state.observation.job;
         countdown = [...job.enable, ...job.disable].includes(node.hostname)
@@ -159,7 +159,7 @@ export function displayState(state: MonitoringState) {
     let canForgeObservation = false;
     let countdown: number | undefined;
     if (state.observation) {
-      canForgeObservation = state.observation.canForge.get(node.hostname) || false;
+      canForgeObservation = state.observation.canForge.includes(node.hostname);
       if (state.observation.job) {
         const job = state.observation.job;
         countdown = [...job.enable, ...job.disable].includes(node.hostname)
