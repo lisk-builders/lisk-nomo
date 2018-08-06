@@ -1,7 +1,6 @@
 {
   "name": "lisk-nomo",
   "version": "1.0.0",
-  "main": "index.js",
   "author": "Simon Warta (prolina delegate)",
   "license": "MIT",
   "scripts": {
