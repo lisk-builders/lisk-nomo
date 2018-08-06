@@ -112,13 +112,10 @@ export class MonitoredNode extends events.EventEmitter {
   }
 
   get chainHead(): ChainHead | undefined {
-    const keys = Array.from(this._chain.keys());
-    keys.sort();
-
-    if (keys.length == 0) {
+    if (this._chain.size == 0) {
       return undefined;
     } else {
-      const maxKey = keys[keys.length - 1];
+      const maxKey = Math.max(...this._chain.keys());
       return {
         height: maxKey,
         broadhash: this._chain.get(maxKey)!,
