@@ -67,7 +67,7 @@ function getCurrentState(): MonitoringState {
 let lastOutput = 0;
 for (const node of nodes) {
   node.on(MonitoredNodeEvents.Updated, () => {
-    if (Date.now() - lastOutput > 500) {
+    if (Date.now() - lastOutput > 250) {
       let state = getCurrentState();
       displayState(state);
       lastOutput = Date.now();
