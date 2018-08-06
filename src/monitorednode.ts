@@ -188,7 +188,7 @@ export class MonitoredNode extends events.EventEmitter implements FullNodeStatus
     setInterval(async () => {
       try {
         const ping = await new Ping(this.hostname, this.wsPort).run();
-        this._wsPing = Number.isNaN(ping.avg) ? undefined : ping.avg;
+        this._wsPing = Number.isNaN(ping.avg) ? undefined : Math.round(ping.avg);
       } catch {
         this._wsPing = undefined;
       }
