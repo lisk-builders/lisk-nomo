@@ -34,10 +34,10 @@ Status time 2018-08-02T19:03:19.782Z | Monitoring IP: 36.176.219.178
                                                     clock  height/                 best     sen
                         ping   socket   version     diff   chain           API     height   sus  forging
 --------------------------------------------------------------------------------------------------------
-testnet.lisk.io          24ms  online   1.0.0-rc.1   26ms  5877782/a1b224  HTTP    5877782   90  unknown
-node01.testnet.lisk      14ms  online   1.0.0-rc.1   22ms  5877782/a1b224  closed  5877782    ?  unknown
-node02.testnet.lisk      30ms  online   1.0.0-rc.1   32ms  5877782/a1b224  closed  5877782    ?  unknown
-node03.testnet.lisk      16ms  online   1.0.0-rc.1   13ms  5877782/a1b224  closed  5877782    ?  unknown
+testnet.lisk.io          24ms  online   1.0.0-rc.1   0.0s  5877782/a1b224  HTTP    5877782   90  unknown
+node01.testnet.lisk      14ms  online   1.0.0-rc.1   0.0s  5877782/a1b224  closed  5877782    ?  unknown
+node02.testnet.lisk      30ms  online   1.0.0-rc.1   0.0s  5877782/a1b224  closed  5877782    ?  unknown
+node03.testnet.lisk      16ms  online   1.0.0-rc.1   0.0s  5877782/a1b224  closed  5877782    ?  unknown
 ```
 
 | Field              | Description                                   |
@@ -45,7 +45,7 @@ node03.testnet.lisk      16ms  online   1.0.0-rc.1   13ms  5877782/a1b224  close
 | ping               | A TCP/IP ping to the node's WebSocket port    |
 | socket             | Online/offline status                         |
 | version            | The node's version of Lisk core               |
-| est. clock diff    | An rough estimation of the system clock difference beween monitor and node. Typical values are -10ms to 150ms. A diff less than -100ms or greater than 500ms means that the node's clock is probably not synced. |
+| est. clock diff    | An rough estimation of the system clock difference beween monitor and node. Typical values are -0.01s to 0.2s. A diff less than -0.1s or greater than 0.5s means that the node's clock is probably not synced. |
 | WS height/chain    | The height we get from the Websocket connection and a prefix of the broadhash |
 | API                | API access: HTTPs, HTTP or closed. Add the monitoring IP to api.access.whitelist in the node's config.json to get data |
 | WS/API best height | The best height we know of the node           |
@@ -61,11 +61,11 @@ Status time 2018-08-02T19:22:05.984Z | Monitoring IP: 36.176.219.178
                                                     clock  height/                 best     sen
                         ping   socket   version     diff   chain           API     height   sus  forging
 -----------------------------------------------------------------------------------------------------------
-node01.testnet.lisk      14ms  online   1.0.0-rc.1   13ms  5877886/02cc27  HTTP    5877886   89  configured
-node02.testnet.lisk      30ms  online   1.0.0-rc.1   33ms  5877886/02cc27  HTTP    5877886   99  configured
-node03.testnet.lisk      15ms  online   1.0.0-rc.1    5ms  5877886/02cc27  HTTP    5877886   92  configured
+node01.testnet.lisk      14ms  online   1.0.0-rc.1   0.0s  5877886/02cc27  HTTP    5877886   89  configured
+node02.testnet.lisk      30ms  online   1.0.0-rc.1   0.0s  5877886/02cc27  HTTP    5877886   99  configured
+node03.testnet.lisk      15ms  online   1.0.0-rc.1   0.0s  5877886/02cc27  HTTP    5877886   92  configured
 
-testnet.lisk.io          24ms  online   1.0.0-rc.1   34ms  5877886/02cc27  HTTP    5877886   85  unknown
+testnet.lisk.io          24ms  online   1.0.0-rc.1   0.0s  5877886/02cc27  HTTP    5877886   85  unknown
 ```
 
 ## Auto-enable forging
@@ -87,11 +87,11 @@ Status time 2018-08-02T19:26:55.343Z | Monitoring IP: 36.176.219.178
                                                     clock  height/                 best     sen
                         ping   socket   version     diff   chain           API     height   sus  forging
 ----------------------------------------------------------------------------------------------------------------------
-node01.testnet.lisk      14ms  online   1.0.0-rc.1   17ms  5877909/287cc1  HTTP    5877909   99  forging         ready
-node02.testnet.lisk      31ms  online   1.0.0-rc.1   33ms  5877909/287cc1  HTTP    5877909   97  configured      ready
-node03.testnet.lisk      15ms  online   1.0.0-rc.1   18ms  5877909/287cc1  HTTP    5877909  100  configured      ready
+node01.testnet.lisk      14ms  online   1.0.0-rc.1   0.0s  5877909/287cc1  HTTP    5877909   99  forging         ready
+node02.testnet.lisk      31ms  online   1.0.0-rc.1   0.0s  5877909/287cc1  HTTP    5877909   97  configured      ready
+node03.testnet.lisk      15ms  online   1.0.0-rc.1   0.0s  5877909/287cc1  HTTP    5877909  100  configured      ready
 
-testnet.lisk.io          24ms  online   1.0.0-rc.1   36ms  5877909/287cc1  HTTP    5877909   90  unknown
+testnet.lisk.io          24ms  online   1.0.0-rc.1   0.0s  5877909/287cc1  HTTP    5877909   90  unknown
 ```
 
 Happy forging!

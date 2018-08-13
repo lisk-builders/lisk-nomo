@@ -23,14 +23,17 @@ function printChainHead(chain: ChainHead | undefined): string {
   }
 }
 
-function formatSmallTime(ms: number | undefined, undefinedString: string = ""): string {
+function formatSmallTime(ms: number | undefined, undefinedString: string, forceSeconds: boolean): string {
   if (ms === undefined || Number.isNaN(ms)) {
     return undefinedString.padStart(5);
   }
 
   const roundedMs = Math.round(ms);
-  if (roundedMs > -1000 && roundedMs < 1000) return roundedMs.toString().padStart(3) + "ms";
-  else return (roundedMs / 1000).toFixed(1).padStart(4) + "s";
+  if (forceSeconds || Math.abs(roundedMs) >= 999) {
+    return (roundedMs / 1000).toFixed(1).padStart(4) + "s";
+  } else {
+    return roundedMs.toString().padStart(3) + "ms";
+  }
 }
 
 function nameWidth(name: string, length: number) {
@@ -87,10 +90,10 @@ function statusLine(
   ).padStart(7);
   return [
     nameWidth(node.hostname, 22),
-    formatSmallTime(node.wsPing, "⚠ "),
+    formatSmallTime(node.wsPing, "⚠ ", false),
     online,
     (node.version || "").padStart(10),
-    formatSmallTime(node.clockDiffEstimation),
+    formatSmallTime(node.clockDiffEstimation, "?", true),
     printChainHead(node.chainHead).padEnd(14),
     api,
     bestHeight,
