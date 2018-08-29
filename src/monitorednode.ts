@@ -158,6 +158,7 @@ export class MonitoredNode extends events.EventEmitter {
     public readonly hostname: string,
     public readonly httpPort: number,
     public readonly wsPort: number,
+    public readonly nethash: string,
   ) {
     super();
 
@@ -170,7 +171,7 @@ export class MonitoredNode extends events.EventEmitter {
         httpPort: httpPort,
         wsPort: wsPort,
         nonce: "",
-        nethash: "da3ed6a45429278bac2666961289ca17ad86595d33b31037615d4b8e8f158bba",
+        nethash: nethash,
         ownHttpPort: ownNode.httpPort,
         ownWSPort: ownNode.wsPort,
       },
