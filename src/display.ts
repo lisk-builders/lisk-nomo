@@ -23,7 +23,11 @@ function printChainHead(chain: ChainHead | undefined): string {
   }
 }
 
-function formatSmallTime(ms: number | undefined, undefinedString: string, forceSeconds: boolean): string {
+function formatSmallTime(
+  ms: number | undefined,
+  undefinedString: string,
+  forceSeconds: boolean,
+): string {
   if (ms === undefined || Number.isNaN(ms)) {
     return undefinedString.padStart(5);
   }

@@ -12,7 +12,7 @@ const parser = new ArgumentParser({ description: "Lisk node monitor" });
 parser.addArgument("--network", {
   choices: ["mainnet", "testnet"],
   defaultValue: "mainnet",
-  help: "Lisk network to use (mainnet or testnet)"
+  help: "Lisk network to use (mainnet or testnet)",
 });
 parser.addArgument("--apiPort", { help: "set to enable nomo REST API" });
 parser.addArgument("--password", { help: "the password to enable/disable forging" });
@@ -51,17 +51,17 @@ let nethash: string;
 
 switch (args.network as string) {
   case "mainnet":
-  nodesHttpPort = 8000;
-  nodesWsPort = 8001;
-  nethash = "ed14889723f24ecc54871d058d98ce91ff2f973192075c0155ba2b7b70ad2511";
-  break;
+    nodesHttpPort = 8000;
+    nodesWsPort = 8001;
+    nethash = "ed14889723f24ecc54871d058d98ce91ff2f973192075c0155ba2b7b70ad2511";
+    break;
   case "testnet":
-  nodesHttpPort = 7000;
-  nodesWsPort = 7001;
-  nethash = "da3ed6a45429278bac2666961289ca17ad86595d33b31037615d4b8e8f158bba";
-  break;
+    nodesHttpPort = 7000;
+    nodesWsPort = 7001;
+    nethash = "da3ed6a45429278bac2666961289ca17ad86595d33b31037615d4b8e8f158bba";
+    break;
   default:
-  throw Error("Unknown network");
+    throw Error("Unknown network");
 }
 
 const nodes: ReadonlyArray<MonitoredNode> = (args.nodes as string[]).map(
