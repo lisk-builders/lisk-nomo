@@ -45,17 +45,20 @@ if ((args.nodes as string[]).length === 0) {
   process.exit(1);
 }
 
+let nodesHttpsPort: number;
 let nodesHttpPort: number;
 let nodesWsPort: number;
 let nethash: string;
 
 switch (args.network as string) {
   case "mainnet":
+    nodesHttpsPort = 443;
     nodesHttpPort = 8000;
     nodesWsPort = 8001;
     nethash = "ed14889723f24ecc54871d058d98ce91ff2f973192075c0155ba2b7b70ad2511";
     break;
   case "testnet":
+    nodesHttpsPort = 443;
     nodesHttpPort = 7000;
     nodesWsPort = 7001;
     nethash = "da3ed6a45429278bac2666961289ca17ad86595d33b31037615d4b8e8f158bba";
@@ -65,7 +68,7 @@ switch (args.network as string) {
 }
 
 const nodes: ReadonlyArray<MonitoredNode> = (args.nodes as string[]).map(
-  host => new MonitoredNode(ownNode, host, nodesHttpPort, nodesWsPort, nethash),
+  host => new MonitoredNode(ownNode, host, nodesHttpsPort, nodesHttpPort, nodesWsPort, nethash),
 );
 
 let monitoringIp: string | undefined;

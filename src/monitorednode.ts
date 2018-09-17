@@ -148,8 +148,8 @@ export class MonitoredNode extends events.EventEmitter {
     }
   }
 
-  private readonly httpApi: ExtendedHttpApi;
   private readonly httpsApi: ExtendedHttpApi;
+  private readonly httpApi: ExtendedHttpApi;
   private readonly connectedPeer: LiskPeer;
   private readonly _chain: Chain = new Map<number, string>(); // height -> broadhash
   private _wsPing: number | undefined;
@@ -165,14 +165,15 @@ export class MonitoredNode extends events.EventEmitter {
   constructor(
     ownNode: OwnNode,
     public readonly hostname: string,
+    public readonly httpsPort: number,
     public readonly httpPort: number,
     public readonly wsPort: number,
     public readonly nethash: string,
   ) {
     super();
 
+    this.httpsApi = new ExtendedHttpApi(hostname, httpsPort, true);
     this.httpApi = new ExtendedHttpApi(hostname, httpPort);
-    this.httpsApi = new ExtendedHttpApi(hostname, httpPort, true);
 
     this.connectedPeer = new LiskPeer(
       {
