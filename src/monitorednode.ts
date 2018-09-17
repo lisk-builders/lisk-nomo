@@ -1,4 +1,5 @@
 import * as events from "events";
+import * as log from "winston";
 
 import { ExtendedHttpApi, ForgingStatus } from "./extendedhttpapi";
 import { ResponseList } from "./external/argus/src/lib/HttpApi";
@@ -262,7 +263,7 @@ export class MonitoredNode extends events.EventEmitter {
               this._forgingConfigured = undefined;
               this._isForging = undefined;
             } else {
-              throw error;
+              log.error(error);
             }
           });
       } else {
