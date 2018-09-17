@@ -139,6 +139,14 @@ export class MonitoredNode extends events.EventEmitter {
     return timeDiffMs - ping;
   }
 
+  get bestApi(): ExtendedHttpApi {
+    if (this._apiStatus == ApiStatus.HttpsOpen) {
+      return this.httpsApi;
+    } else {
+      return this.httpApi;
+    }
+  }
+
   private readonly httpApi: ExtendedHttpApi;
   private readonly httpsApi: ExtendedHttpApi;
   private readonly connectedPeer: LiskPeer;
@@ -220,16 +228,12 @@ export class MonitoredNode extends events.EventEmitter {
     setInterval(async () => {
       let consensus: number | undefined;
       let height: number | undefined;
-      if (this._apiStatus == ApiStatus.HttpOpen) {
-        try {
-          const statusDetailed = (await this.httpApi.getNodeStatus()).data;
-          consensus = statusDetailed.consensus;
-          height = statusDetailed.height;
-        } catch (_) {
-          consensus = undefined;
-          height = undefined;
-        }
-      } else {
+
+      try {
+        const statusDetailed = (await this.bestApi.getNodeStatus()).data;
+        consensus = statusDetailed.consensus;
+        height = statusDetailed.height;
+      } catch (_) {
         consensus = undefined;
         height = undefined;
       }
@@ -247,7 +251,7 @@ export class MonitoredNode extends events.EventEmitter {
 
     setInterval(async () => {
       if (this._apiStatus == ApiStatus.HttpOpen) {
-        this.httpApi
+        this.bestApi
           .getStatusForging()
           .then(response => response.data)
           .then(forgingStatusList => {
@@ -273,7 +277,7 @@ export class MonitoredNode extends events.EventEmitter {
   public async enableForging(password: string): Promise<ResponseList<ForgingStatus> | undefined> {
     if (typeof this._forgingConfigured === "string") {
       const pubkey = this._forgingConfigured;
-      const response = await this.httpApi.updateForging(true, pubkey, password);
+      const response = await this.bestApi.updateForging(true, pubkey, password);
       this.processNewForgingStatus(response.data);
       return response;
     } else {
@@ -284,7 +288,7 @@ export class MonitoredNode extends events.EventEmitter {
   public async disableForging(password: string): Promise<ResponseList<ForgingStatus> | undefined> {
     if (typeof this._isForging === "string") {
       const pubkey = this._isForging;
-      const response = await this.httpApi.updateForging(false, pubkey, password);
+      const response = await this.bestApi.updateForging(false, pubkey, password);
       this.processNewForgingStatus(response.data);
       return response;
     } else {
