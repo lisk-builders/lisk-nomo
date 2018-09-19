@@ -252,7 +252,7 @@ export class MonitoredNode extends events.EventEmitter {
     }, timePlusMinus(3000));
 
     setInterval(async () => {
-      if (this._apiStatus == ApiStatus.HttpOpen) {
+      if (this._apiStatus == ApiStatus.HttpOpen || this._apiStatus == ApiStatus.HttpsOpen) {
         this.bestApi
           .getStatusForging()
           .then(response => response.data)
