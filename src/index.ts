@@ -74,11 +74,17 @@ const nodes: ReadonlyArray<MonitoredNode> = (args.nodes as string[]).map(
 let monitoringIp: string | undefined;
 getIp()
   .then(i => (monitoringIp = i))
-  .catch(console.warn);
+  .catch(error => {
+    monitoringIp = undefined;
+    winston.warn(error);
+  });
 setInterval(() => {
   getIp()
     .then(i => (monitoringIp = i))
-    .catch(console.warn);
+    .catch(error => {
+      monitoringIp = undefined;
+      winston.warn(error)
+    });
 }, 60 * 1000);
 
 const manager = args.password ? new Manager(nodes, args.password) : undefined;

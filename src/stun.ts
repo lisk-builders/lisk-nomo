@@ -20,6 +20,9 @@ function getIpFromStunServer(stunHost: string, stunPort: number): Promise<string
       server.close();
       resolve(ip);
     });
+    server.on("error", (error: any) => {
+      reject(error);
+    });
 
     server.send(request, stunPort, stunHost);
   });
