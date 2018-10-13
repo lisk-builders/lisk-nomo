@@ -1448,10 +1448,9 @@ strip-ansi@^4.0.0:
   dependencies:
     ansi-regex "^3.0.0"
 
-stun@^1.2.0:
+"stun@https://github.com/webmaster128/stun.git#handle-network-erors":
   version "1.2.1"
-  resolved "https://registry.yarnpkg.com/stun/-/stun-1.2.1.tgz#10cc7292f540aea82f6bc77b1bf9a58d90bd888c"
-  integrity sha512-ucDWc8eF1cxxVXbn6qsj17w9xfLBLYaRdLcGBnrSnMeIUNOeAWHXXTqgJddY4t4ovnz/KR6xzHHLZhgfRcQkFQ==
+  resolved "https://github.com/webmaster128/stun.git#a5c95153217bd9063a0708868ef3c76db9d0f753"
   dependencies:
     binary-data "^0.5.0-0"
     buffer-xor "^2.0.2"
