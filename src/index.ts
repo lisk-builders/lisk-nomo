@@ -84,7 +84,7 @@ setInterval(() => {
     .then(i => (monitoringIp = i))
     .catch(error => {
       monitoringIp = undefined;
-      winston.warn(error)
+      winston.warn(error);
     });
 }, 60 * 1000);
 
