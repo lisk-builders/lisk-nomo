@@ -41,6 +41,7 @@ export interface OwnNode {
   readonly httpPort: number;
   readonly wsPort: number;
   readonly nonce: string;
+  readonly version: string;
 }
 
 function timePlusMinus(ms: number): number {
@@ -186,6 +187,7 @@ export class MonitoredNode extends events.EventEmitter {
         ownWSPort: ownNode.wsPort,
       },
       ownNode.nonce,
+      ownNode.version,
     );
 
     this.connectedPeer.on(LiskPeerEvent.statusUpdated, (status: NodeStatus) => {

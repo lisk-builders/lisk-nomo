@@ -38,6 +38,7 @@ const ownNode: OwnNode = {
   httpPort: 3000,
   wsPort: 3001,
   nonce: randomString(16),
+  version: "1.1.0",
 };
 
 if ((args.nodes as string[]).length === 0) {
