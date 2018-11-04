@@ -24,6 +24,7 @@
     "argparse": "^1.0.10",
     "events": "^3.0.0",
     "koa": "^2.5.2",
+    "libargus": "^0.1.1",
     "request": "^2.87.0",
     "request-promise-native": "^1.0.5",
     "semver": "^5.5.0",

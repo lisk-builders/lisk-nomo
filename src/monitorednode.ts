@@ -1,10 +1,8 @@
 import * as events from "events";
+import { LiskPeer, LiskPeerEvent, NodeStatus, PeerState, PeerInfo, ResponseList } from "libargus";
 import * as log from "winston";
 
 import { ExtendedHttpApi, ForgingStatus } from "./extendedhttpapi";
-import { ResponseList } from "./external/argus/src/lib/HttpApi";
-import { NodeStatus, PeerInfo } from "./external/argus/src/peers/LiskClient";
-import { LiskPeer, LiskPeerEvent, PeerState } from "./external/argus/src/peers/Peer";
 import { Ping } from "./ping";
 
 export type Chain = Map<number, string>; // height -> broadhash
