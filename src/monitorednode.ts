@@ -1,8 +1,7 @@
 import * as events from "events";
-import { LiskPeer, LiskPeerEvent, NodeStatus, PeerState, PeerInfo, ResponseList } from "libargus";
+import { ForgingStatus, HttpApi, LiskPeer, LiskPeerEvent, NodeStatus, PeerState, PeerInfo, ResponseList } from "libargus";
 import * as log from "winston";
 
-import { ExtendedHttpApi, ForgingStatus } from "./extendedhttpapi";
 import { Ping } from "./ping";
 
 export type Chain = Map<number, string>; // height -> broadhash
@@ -139,7 +138,7 @@ export class MonitoredNode extends events.EventEmitter {
     return timeDiffMs - ping;
   }
 
-  get bestApi(): ExtendedHttpApi {
+  get bestApi(): HttpApi {
     if (this._apiStatus == ApiStatus.HttpsOpen) {
       return this.httpsApi;
     } else {
@@ -147,8 +146,8 @@ export class MonitoredNode extends events.EventEmitter {
     }
   }
 
-  private readonly httpsApi: ExtendedHttpApi;
-  private readonly httpApi: ExtendedHttpApi;
+  private readonly httpsApi: HttpApi;
+  private readonly httpApi: HttpApi;
   private readonly connectedPeer: LiskPeer;
   private readonly _chain: Chain = new Map<number, string>(); // height -> broadhash
   private _wsPing: number | undefined;
@@ -171,8 +170,8 @@ export class MonitoredNode extends events.EventEmitter {
   ) {
     super();
 
-    this.httpsApi = new ExtendedHttpApi(hostname, httpsPort, true);
-    this.httpApi = new ExtendedHttpApi(hostname, httpPort);
+    this.httpsApi = new HttpApi(hostname, httpsPort, true);
+    this.httpApi = new HttpApi(hostname, httpPort);
 
     this.connectedPeer = new LiskPeer(
       {
@@ -254,7 +253,7 @@ export class MonitoredNode extends events.EventEmitter {
     setInterval(async () => {
       if (this._apiStatus == ApiStatus.HttpOpen || this._apiStatus == ApiStatus.HttpsOpen) {
         this.bestApi
-          .getStatusForging()
+          .getForgingStatus()
           .then(response => response.data)
           .then(forgingStatusList => {
             this.processNewForgingStatus(forgingStatusList);
