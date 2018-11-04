@@ -8,12 +8,6 @@
     "build": "tsc",
     "start": "tsc && node build/index.js"
   },
-  "devDependencies": {
-    "@types/argparse": "^1.0.34",
-    "prettier": "^1.13.7",
-    "ts-node": "^7.0.0",
-    "typescript": "^2.9.2"
-  },
   "dependencies": {
     "@types/koa": "^2.0.46",
     "@types/node": "^10.5.2",
@@ -30,5 +24,11 @@
     "tcp-ping": "^0.1.1",
     "underscore": "^1.9.1",
     "winston": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/argparse": "^1.0.34",
+    "prettier": "^1.13.7",
+    "ts-node": "^7.0.0",
+    "typescript": "^2.9.2"
   }
 }
