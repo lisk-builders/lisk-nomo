@@ -6,17 +6,7 @@ import { HttpApi, ResponseList } from "libargus";
 // https://app.swaggerhub.com/apis/LiskHQ/Lisk
 export class ExtendedHttpApi extends HttpApi {
   public getStatusForging(): Promise<ResponseList<ForgingStatus>> {
-    return this.get(`${this.baseUrl()}/node/status/forging`).then(response => {
-      // handle Lisk bug https://github.com/LiskHQ/lisk/issues/2058
-      if (!response.data) {
-        return {
-          ...response,
-          data: [],
-        };
-      }
-
-      return response;
-    });
+    return this.get(`${this.baseUrl()}/node/status/forging`);
   }
 
   public updateForging(
