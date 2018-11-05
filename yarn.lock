@@ -928,10 +928,10 @@ kuler@1.0.x:
   dependencies:
     colornames "^1.1.1"
 
-libargus@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/libargus/-/libargus-0.2.0.tgz#73d491d4fe8aa3b91f6feb505f54c3c7bb1731a4"
-  integrity sha512-9ZbPiyarQcyLq8tJNXt/X8inE5ZTrp8nt8RBHwT6uzDnfrNpAMjm0scwqwQKF4T8Xffv3lKabce0by+ElFQFTQ==
+libargus@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/libargus/-/libargus-0.3.0.tgz#06a441b16a646a6716d06946bcc57a7e1ceac7dd"
+  integrity sha512-34QcX53Vu+oF0m5TUgueCu1xGgal1Xz0546WREyV9qx0aZKL395NMFEaicdU3O5TfCc9X4386jlbuEx/kYLlxw==
   dependencies:
     request "^2.88.0"
     request-promise-native "^1.0.5"

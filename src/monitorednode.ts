@@ -296,7 +296,7 @@ export class MonitoredNode extends events.EventEmitter {
     }
   }
 
-  private processNewForgingStatus(forgingStatusList: ForgingStatus[]) {
+  private processNewForgingStatus(forgingStatusList: ReadonlyArray<ForgingStatus>) {
     if (forgingStatusList.length > 0) {
       const forgingStatus = forgingStatusList[0]; // ignore multi delegate nodes
       this._forgingConfigured = forgingStatus.publicKey;
