@@ -1,10 +1,11 @@
 import { ArgumentParser } from "argparse";
+import { OwnNodeOptions } from "libargus";
 import * as winston from "winston";
 import Koa = require("koa");
 
 import { displayState, initCommandLine } from "./display";
 import { Manager } from "./manager";
-import { MonitoredNode, MonitoredNodeEvents, OwnNode } from "./monitorednode";
+import { MonitoredNode, MonitoredNodeEvents } from "./monitorednode";
 import { MonitoringState } from "./monitoringstate";
 import { getIp } from "./stun";
 
@@ -34,10 +35,11 @@ function randomString(length: number): string {
     .join("");
 }
 
-const ownNode: OwnNode = {
+const ownNode: OwnNodeOptions = {
   httpPort: 3000,
   wsPort: 3001,
   nonce: randomString(16),
+  os: "linux",
   version: "1.1.0",
 };
 

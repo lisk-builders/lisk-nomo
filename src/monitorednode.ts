@@ -1,5 +1,15 @@
 import * as events from "events";
-import { ForgingStatus, HttpApi, LiskPeer, LiskPeerEvent, NodeStatus, PeerState, PeerInfo, ResponseList } from "libargus";
+import {
+  ForgingStatus,
+  HttpApi,
+  NodeStatus,
+  OwnNodeOptions,
+  Peer,
+  PeerEvent,
+  PeerState,
+  PeerInfo,
+  ResponseList,
+} from "libargus";
 import * as log from "winston";
 
 import { Ping } from "./ping";
@@ -34,13 +44,6 @@ export interface FullNodeStatus {
   readonly hostname: string;
 }
 
-export interface OwnNode {
-  readonly httpPort: number;
-  readonly wsPort: number;
-  readonly nonce: string;
-  readonly version: string;
-}
-
 function timePlusMinus(ms: number): number {
   const range = 0.3; // +/- 15 %
   return Math.floor(ms * (1 - range) + ms * range * Math.random());
@@ -69,7 +72,7 @@ export const enum MonitoredNodeEvents {
 export class MonitoredNode extends events.EventEmitter {
   get status(): FullNodeStatus {
     return {
-      online: this.connectedPeer.state == PeerState.ONLINE,
+      online: this.connectedPeer.state === PeerState.Online,
       version: this._version,
       wsPing: this._wsPing,
       chainHead: this.chainHead,
@@ -148,7 +151,7 @@ export class MonitoredNode extends events.EventEmitter {
 
   private readonly httpsApi: HttpApi;
   private readonly httpApi: HttpApi;
-  private readonly connectedPeer: LiskPeer;
+  private readonly connectedPeer: Peer;
   private readonly _chain: Chain = new Map<number, string>(); // height -> broadhash
   private _wsPing: number | undefined;
   private _apiStatus: ApiStatus | undefined;
@@ -161,7 +164,7 @@ export class MonitoredNode extends events.EventEmitter {
   private timeDiffs = new Array<number>();
 
   constructor(
-    ownNode: OwnNode,
+    ownNode: OwnNodeOptions,
     public readonly hostname: string,
     public readonly httpsPort: number,
     public readonly httpPort: number,
@@ -173,21 +176,17 @@ export class MonitoredNode extends events.EventEmitter {
     this.httpsApi = new HttpApi(hostname, httpsPort, true);
     this.httpApi = new HttpApi(hostname, httpPort);
 
-    this.connectedPeer = new LiskPeer(
+    this.connectedPeer = new Peer(
       {
         ip: hostname,
         httpPort: httpPort,
         wsPort: wsPort,
-        nonce: "",
         nethash: nethash,
-        ownHttpPort: ownNode.httpPort,
-        ownWSPort: ownNode.wsPort,
       },
-      ownNode.nonce,
-      ownNode.version,
+      ownNode,
     );
 
-    this.connectedPeer.on(LiskPeerEvent.statusUpdated, (status: NodeStatus) => {
+    this.connectedPeer.on(PeerEvent.StatusUpdated, (status: NodeStatus) => {
       if (status.height <= 1) {
         // Height is 1 during app start. Ignore those values
         return;
@@ -199,7 +198,7 @@ export class MonitoredNode extends events.EventEmitter {
       this.emit(MonitoredNodeEvents.Updated);
     });
 
-    this.connectedPeer.on(LiskPeerEvent.peersUpdated, (peers: PeerInfo[]) => {
+    this.connectedPeer.on(PeerEvent.PeersUpdated, (peers: PeerInfo[]) => {
       const mostRecentUpdatedPeerTime = mostRecentPeerUpdate(peers);
       if (mostRecentUpdatedPeerTime) {
         const diff = Date.now() - mostRecentUpdatedPeerTime.getTime();
@@ -297,7 +296,7 @@ export class MonitoredNode extends events.EventEmitter {
     }
   }
 
-  private processNewForgingStatus(forgingStatusList: ForgingStatus[]) {
+  private processNewForgingStatus(forgingStatusList: ReadonlyArray<ForgingStatus>) {
     if (forgingStatusList.length > 0) {
       const forgingStatus = forgingStatusList[0]; // ignore multi delegate nodes
       this._forgingConfigured = forgingStatus.publicKey;
