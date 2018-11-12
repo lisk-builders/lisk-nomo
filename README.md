@@ -22,7 +22,7 @@ $ yarn install
 Monitor a bunch of nodes:
 
 ```
-$ yarn start testnet.lisk.io node01.testnet.lisk node02.testnet.lisk node03.testnet.lisk
+$ yarn start --network testnet testnet.lisk.io node01.testnet.lisk node02.testnet.lisk node03.testnet.lisk
 ```
 
 and see the magic happen
@@ -74,7 +74,7 @@ As you can see, all my personal nodes are configured for forging but non is forg
 When you start with the `--password` parameter, the monitor will auto-select a node for forging and activate it.
 
 ```
-$ yarn start --password 87654321 testnet.lisk.io node01.testnet.lisk node02.testnet.lisk node03.testnet.lisk
+$ yarn start --network testnet --password 87654321 testnet.lisk.io node01.testnet.lisk node02.testnet.lisk node03.testnet.lisk
 ```
 
 After some seconds to collect data and get warm, the manager decided to activate
