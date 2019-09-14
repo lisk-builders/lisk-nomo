@@ -41,6 +41,7 @@ const ownNode: OwnNodeOptions = {
   nonce: randomString(16),
   os: "linux",
   version: "1.1.0",
+  protocolVersion: "1.1"
 };
 
 if ((args.nodes as string[]).length === 0) {

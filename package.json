@@ -16,7 +16,7 @@
     "argparse": "^1.0.10",
     "events": "^3.0.0",
     "koa": "^2.5.2",
-    "libargus": "^0.3.0",
+    "libargus": "https://github.com/lisk-builders/libargus",
     "semver": "^5.5.0",
     "socketcluster": "^14.0.4",
     "socketcluster-client": "^13.0.1",
