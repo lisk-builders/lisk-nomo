@@ -904,10 +904,10 @@ kuler@1.0.x:
   dependencies:
     colornames "^1.1.1"
 
-libargus@^0.3.0:
+"libargus@https://github.com/lisk-builders/libargus":
   version "0.3.0"
-  resolved "https://registry.yarnpkg.com/libargus/-/libargus-0.3.0.tgz#06a441b16a646a6716d06946bcc57a7e1ceac7dd"
-  integrity sha512-34QcX53Vu+oF0m5TUgueCu1xGgal1Xz0546WREyV9qx0aZKL395NMFEaicdU3O5TfCc9X4386jlbuEx/kYLlxw==
+  uid "5b610ecc32db905d502faeeea1a3d814bce829df"
+  resolved "https://github.com/lisk-builders/libargus#5b610ecc32db905d502faeeea1a3d814bce829df"
   dependencies:
     request "^2.88.0"
     request-promise-native "^1.0.5"
@@ -1555,10 +1555,10 @@ uid-number@0.0.6:
   resolved "https://registry.yarnpkg.com/uid-number/-/uid-number-0.0.6.tgz#0ea10e8035e8eb5b8e4449f06da1c730663baa81"
   integrity sha1-DqEOgDXo61uOREnwbaHHMGY7qoE=
 
-underscore@^1.9.1:
-  version "1.9.1"
-  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.9.1.tgz#06dce34a0e68a7babc29b365b8e74b8925203961"
-  integrity sha512-5/4etnCkd9c8gwgowi5/om/mYO5ajCaOgdzj/oW+0eQV9WxKBDZw5+ycmKmeaTXjInS/W0BzpGLo2xR2aBwZdg==
+underscore@^1.12.1, underscore@^1.9.1:
+  version "1.12.1"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.12.1.tgz#7bb8cc9b3d397e201cf8553336d262544ead829e"
+  integrity sha512-hEQt0+ZLDVUMhebKxL4x1BTtDY7bavVofhZ9KZ4aI26X9SRaE+Y3m83XUL1UP2jn8ynjndwCCpEHdUG+9pP1Tw==
 
 universalify@^0.1.0:
   version "0.1.2"
